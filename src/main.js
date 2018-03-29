@@ -3,21 +3,26 @@
 import Vue from 'vue'
 import App from './App'
 import iview from 'iview'
-import router from './router'
+import router from './router/index'
 import axios from 'axios'
 
+require('iview/dist/styles/iview.css');
 
+// import 'node_modules/iview/dist/styles/iview.css'
 
-require('./api/mock/index')
+require('./api/mock/index');
 
+import store from './store'
 
 Vue.config.productionTip = false
-
+Vue.use(iview);
 Vue.prototype.$axios = axios
+Vue.prototype.utils = require('./utils/util');
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

@@ -3,7 +3,7 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
-
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -41,6 +41,20 @@ module.exports = {
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+            use: ['css-loader?minimize'],
+            fallback: 'style-loader'
+        })
+
+
+        // test: /\.css$/,
+        // // 将样式抽取出来为独立的文件
+        // loader: ExtractTextPlugin.extract({fallback:"style-loader", use: "css-loader!postcss-loader"}),
+        // exclude: /node_modules/
+
+    },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',

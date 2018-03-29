@@ -1,8 +1,9 @@
 import Vue from 'vue'
+import iView from 'iview'
 import Router from 'vue-router'
 import Routers from './routers';
 import util from '@/utils/util'
-
+Vue.use(iView);
 Vue.use(Router)
 
 const RouterConfig = {
@@ -12,12 +13,14 @@ const RouterConfig = {
 const routerobj = new Router(RouterConfig);
 
 routerobj.beforeEach((to, from, next) => {
+  iView.LoadingBar.start();
   console.log(to);
   util.title(to.meta.title);
   next()
 });
 
 routerobj.afterEach((to, from, next)=>{
+  iView.LoadingBar.finish();
   console.log(to)
   
 });
