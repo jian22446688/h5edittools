@@ -4,8 +4,8 @@
  * 所有的页面路由
  *
  */
-
-const routers = [{
+const routers = [
+    {
         path: '/',
         meta: {
             title: '首页'
@@ -20,14 +20,14 @@ const routers = [{
                 },
                 component: (resolve) => require(['@/pages/h5edit/homePage/home.vue'], resolve),
             },
-          {
-            path: '/usertheme',
-            name: "个人作品-home",
-            meta: {
-              title: "个人作品"
+            {
+                path: '/usertheme',
+                name: "个人作品-home",
+                meta: {
+                    title: "个人作品"
+                },
+                component: (resolve) => require(['@/pages/h5edit/homePage/home.vue'], resolve),
             },
-            component: (resolve) => require(['@/pages/h5edit/homePage/home.vue'], resolve),
-          },
             {
                 path: '/template',
                 name: "首页-template",
@@ -37,6 +37,22 @@ const routers = [{
                 component: (resolve) => require(['@/pages/h5edit/homePage/template.vue'], resolve),
             }
         ]
+    },
+    {
+        path: '/login',
+        meta: {
+            title: '用户登录'
+        },
+        name: 'userLogin',
+        component: (resolve) => require(['@/pages/h5edit/homePage/login.vue'], resolve)
+    },
+    {
+        path: '/regist',
+        meta: {
+            title: '用户注册'
+        },
+        name: 'userRegist',
+        component: (resolve) => require(['@/pages/h5edit/homePage/regist.vue'], resolve)
     },
     {
         path: '/403',

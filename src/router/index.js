@@ -14,15 +14,13 @@ const routerobj = new Router(RouterConfig);
 
 routerobj.beforeEach((to, from, next) => {
   iView.LoadingBar.start();
-  console.log(to);
   util.title(to.meta.title);
   next()
 });
 
 routerobj.afterEach((to, from, next)=>{
   iView.LoadingBar.finish();
-  console.log(to)
-  
+
 });
 
 

@@ -8,7 +8,7 @@ import axios from 'axios'
 
 require('iview/dist/styles/iview.css');
 
-// import 'node_modules/iview/dist/styles/iview.css'
+// import 'iview/dist/styles/iview.css'
 
 require('./api/mock/index');
 

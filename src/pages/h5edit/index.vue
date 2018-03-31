@@ -64,10 +64,7 @@
       }
     },
     mounted(){
-      this.$axios.get('/api/data').then(res => {
-        this.msg = res.data.data;
-        console.log(res);
-      });
+
     },
 
     methods: {
