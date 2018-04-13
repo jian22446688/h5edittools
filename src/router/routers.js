@@ -28,14 +28,6 @@ const routers = [
                 },
                 component: (resolve) => require(['@/pages/h5edit/homePage/home.vue'], resolve),
             },
-            {
-                path: '/template',
-                name: "首页-template",
-                meta: {
-                    title: "推荐模板"
-                },
-                component: (resolve) => require(['@/pages/h5edit/homePage/template.vue'], resolve),
-            }
         ]
     },
     {
@@ -53,6 +45,14 @@ const routers = [
         },
         name: 'userRegist',
         component: (resolve) => require(['@/pages/h5edit/homePage/regist.vue'], resolve)
+    },
+    {
+        path: '/edit',
+        meta: {
+            title: '编辑'
+        },
+        name: 'editing',
+        component: (resolve) => require(['@/pages/h5edit/edit/edit.vue'], resolve)
     },
     {
         path: '/403',

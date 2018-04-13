@@ -5,14 +5,14 @@ import App from './App'
 import iview from 'iview'
 import router from './router/index'
 import axios from 'axios'
-
 require('iview/dist/styles/iview.css');
-
 // import 'iview/dist/styles/iview.css'
-
 require('./api/mock/index');
-
 import store from './store'
+
+import VueDND from 'awe-dnd'
+
+Vue.use(VueDND)
 
 Vue.config.productionTip = false
 Vue.use(iview);

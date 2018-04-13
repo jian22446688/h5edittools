@@ -86,7 +86,22 @@ utils.attachmentSizeFormat = function(fileSize, level){
 
 //先把中文替换成两个字节的英文，在计算长度
 utils.getStrLength = function(str) {
-    return str.replace(/[\u0391-\uFFE5]/g,"aa").length;  
-};  
+    return str.replace(/[\u0391-\uFFE5]/g,"aa").length;
+};
+
+/**
+ * 数组分组
+ * @param array
+ * @param subGroupLength
+ * @returns {Array}
+ */
+utils.arrGroup = function (array, subGroupLength) {
+    var index = 0;
+    var newArray = [];
+    while(index < array.length) {
+        newArray.push(array.slice(index, index += subGroupLength));
+    }
+    return newArray;
+}
 
 module.exports = utils;
