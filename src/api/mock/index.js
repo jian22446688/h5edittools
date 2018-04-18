@@ -44,9 +44,9 @@ Mock.mock('/api/gettest', {
 Mock.mock('/api/getThemeList?type=', getTempobj(temp.themeList));
 
 //获取验证码
-Mock.mock( /(\/api\/)[\w/]+/, getTempobj({
-    img: '@dataImage("122x36",  "@color", "@first")'
-}))
+// Mock.mock( /(\/api\/)[\w/]+/, getTempobj({
+//     img: '@dataImage("122x36",  "@color", "@first")'
+// }))
 
 
 

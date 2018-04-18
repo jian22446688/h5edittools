@@ -62,11 +62,11 @@
                 return this.userName;
             },
             getIsLogin(){
-                return this.$store.getters.getIsLogin;
+                return this.$store.getters.getUserInfo;
             }
         },
         mounted(){
-           this.$store.commit('getislofin', true);
+
         },
 
         methods: {

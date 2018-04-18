@@ -1,6 +1,6 @@
 //user
-export const USER_GETVARIFYCODE     = 'user_getvarifycode'
-export const USER_GET_ISLOGIN       = 'getislofin'
+export const USER_GETVARIFYCODE     = 'getvarifycode'
+export const USER_GET_LOGIN         = 'login'
 
 //edit
 export const CREATE_THEME           = 'create_theme';

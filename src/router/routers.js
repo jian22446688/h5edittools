@@ -24,7 +24,8 @@ const routers = [
                 path: '/usertheme',
                 name: "个人作品-home",
                 meta: {
-                    title: "个人作品"
+                    title: "个人作品",
+                    userAuth: true,
                 },
                 component: (resolve) => require(['@/pages/h5edit/homePage/home.vue'], resolve),
             },
@@ -49,7 +50,8 @@ const routers = [
     {
         path: '/edit',
         meta: {
-            title: '编辑'
+            title: '编辑',
+            userAuth: true,
         },
         name: 'editing',
         component: (resolve) => require(['@/pages/h5edit/edit/edit.vue'], resolve)

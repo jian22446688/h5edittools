@@ -11,7 +11,7 @@ require('./api/mock/index');
 import store from './store'
 
 import VueDND from 'awe-dnd'
-
+axios.defaults.withCredentials = true
 Vue.use(VueDND)
 
 Vue.config.productionTip = false

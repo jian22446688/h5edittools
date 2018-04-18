@@ -5,65 +5,73 @@
 const path = require('path')
 
 module.exports = {
-  dev: {
+    dev: {
 
-    // Paths
-    assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-    proxyTable: {},
+        // Paths
+        assetsSubDirectory: 'static',
+        assetsPublicPath: '/',
 
-    // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-    autoOpenBrowser: true,
-    errorOverlay: true,
-    notifyOnErrors: true,
-    poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
-    
-    
-    /**
-     * Source Maps
-     */ 
 
-    // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'cheap-module-eval-source-map',
+        // Various Dev Server settings
+        host: 'localhost', // can be overwritten by process.env.HOST
+        port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+        autoOpenBrowser: true,
+        errorOverlay: true,
+        notifyOnErrors: true,
+        poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    // If you have problems debugging vue-files in devtools,
-    // set this to false - it *may* help
-    // https://vue-loader.vuejs.org/en/options.html#cachebusting
-    cacheBusting: true,
+        proxyTable: {
+            '/api': {
+                target: 'http://localhost:3000/api',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/api': ''
+                }
+            },
+            /**
+             * Source Maps
+             */
 
-    cssSourceMap: true
-  },
+            // https://webpack.js.org/configuration/devtool/#development
+            devtool: 'cheap-module-eval-source-map',
 
-  build: {
-    // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+            // If you have problems debugging vue-files in devtools,
+            // set this to false - it *may* help
+            // https://vue-loader.vuejs.org/en/options.html#cachebusting
+            cacheBusting: true,
 
-    // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
-    assetsPublicPath: './', // 为了在 本地测试 能加载到资源文件 加点. ;
+            cssSourceMap: true
+        },
+    },
 
-    /**
-     * Source Maps
-     */
+    build: {
+        // Template for index.html
+        index: path.resolve(__dirname, '../dist/index.html'),
 
-    productionSourceMap: true,
-    // https://webpack.js.org/configuration/devtool/#production
-    devtool: '#source-map',
+        // Paths
+        assetsRoot: path.resolve(__dirname, '../dist'),
+        assetsSubDirectory: 'static',
+        assetsPublicPath: './', // 为了在 本地测试 能加载到资源文件 加点. ;
 
-    // Gzip off by default as many popular static hosts such as
-    // Surge or Netlify already gzip all static assets for you.
-    // Before setting to `true`, make sure to:
-    // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
-    productionGzipExtensions: ['js', 'css'],
+        /**
+         * Source Maps
+         */
 
-    // Run the build command with an extra argument to
-    // View the bundle analyzer report after build finishes:
-    // `npm run build --report`
-    // Set to `true` or `false` to always turn it on or off
-    bundleAnalyzerReport: process.env.npm_config_report
-  }
+        productionSourceMap: true,
+        // https://webpack.js.org/configuration/devtool/#production
+        devtool: '#source-map',
+
+        // Gzip off by default as many popular static hosts such as
+        // Surge or Netlify already gzip all static assets for you.
+        // Before setting to `true`, make sure to:
+        // npm install --save-dev compression-webpack-plugin
+        productionGzip: false,
+        productionGzipExtensions: ['js', 'css'],
+
+        // Run the build command with an extra argument to
+        // View the bundle analyzer report after build finishes:
+        // `npm run build --report`
+        // Set to `true` or `false` to always turn it on or off
+        bundleAnalyzerReport: process.env.npm_config_report
+    }
 }

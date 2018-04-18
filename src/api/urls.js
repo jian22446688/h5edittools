@@ -13,6 +13,16 @@ export const getVarifycode = () => {
     return http.get(api.GET_VARIFYCODE)
 }
 
+export const register = (param) => {
+    return http.post(api.POST_REGISTER, param)
+}
 
+export const login = (par) => {
+    return http.post(api.POST_LOGIN, par)
+}
+
+export const logout = () => {
+    http.get(api.GET_LOGOUT)
+}
 
 
