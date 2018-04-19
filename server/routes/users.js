@@ -13,6 +13,7 @@ router.get('/userinfo',  function (req, res) {
         res.data.body = req.session.userinfo
         res.json(res.data)
     }else {
+        res.data.code = 40001
         res.data.message = '获取用户信息失败'
         res.json(res.data)
     }
@@ -26,7 +27,7 @@ router.get('/usertest', function (req, res) {
         console.log(err)
         if(err){
             req.session.userinfo = err
-            res.data.message = '获取用户信息成功'
+            res.data.message = '设置用户信息成功'
             res.data.body = err
             res.json(res.data)
         }
@@ -116,6 +117,7 @@ router.post('/login', function (req, res) {
                     res.data.body = err;
                     console.log(" 欢迎：" +  err.name + ' 登录成功')
                 }else {
+                    res.data.code = -1
                     res.data.message = "用户名密码错误"
                 }
                 res.json(res.data);

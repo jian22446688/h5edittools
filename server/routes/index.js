@@ -6,7 +6,7 @@ router.use(function (req, res, next) {
     res.data = {
         code: 0,
         message: '请求成功',
-        body: {}
+        body: null
     }
     next();
 });

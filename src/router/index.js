@@ -23,14 +23,20 @@ routerobj.beforeEach((to, from, next) => {
  * 认证用户是否登录
  */
 routerobj.beforeEach((to, from, next) => {
-    console.log(to.matched)
-
     //需要登录验证的路由
+    let user = routerobj.app.$options.store.getters.getUserInfo;
+    console.log("打印用户信息")
+    console.log(user);
+    console.log("是否需要登录：" + to.matched.some(record => record.meta.userAuth))
     if(to.matched.some(record => record.meta.userAuth)){
-
+        if (!user) {
+            next({ path: '/login',query: { redirect: to.fullPath }});
+        }else {
+            next()
+        }
+    }else {
+        next();
     }
-
-    next();
 })
 
 
@@ -44,7 +50,6 @@ routerobj.afterEach((to, from, next)=>{
   iView.LoadingBar.finish();
 
 });
-
 
 
 export default routerobj;

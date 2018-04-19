@@ -66,7 +66,8 @@
             }
         },
         mounted(){
-
+            console.log("Index 获取用户信息")
+            console.log(this.getIsLogin)
         },
 
         methods: {
@@ -84,8 +85,8 @@
                     this.$Modal.confirm({title: "提示",content: "是否退出登录？？？",
                         onOk: () => {
                             this.$Message.success('成功退出登录');
-                            this.$store.commit('getislofin', false);
-                            this.$router.push('/');
+                            this.$store.dispatch('logout');
+                            // this.$router.push('/');
                         }
                     })
                 }

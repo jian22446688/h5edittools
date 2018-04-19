@@ -24,11 +24,13 @@ if (app.get('env') === 'production') {
  */
 app.use(session({
     secret: 'cary',
+
     proxy : true,
     resave:false,//添加这行
+    rolling: true, // 访问刷新时间
     saveUninitialized: true,//添加这行
     cookie : {
-        maxAge : 1000 * 60 * 2, // 设置 session 的有效时间，单位毫秒  1000 * 60 * 2
+        maxAge : 1000 * 60 * 60 * 2, // 设置 session 的有效时间，单位毫秒  1000 * 60 * 2
     },
 }));
 

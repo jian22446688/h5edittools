@@ -8,7 +8,7 @@
     export default {
         name: 'App',
         created(){
-            this.$store.dispatch('getUserinfo');
+            this.$store.dispatch('getUserInfo');
         }
     }
 </script>

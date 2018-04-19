@@ -22,7 +22,11 @@ export const login = (par) => {
 }
 
 export const logout = () => {
-    http.get(api.GET_LOGOUT)
+    return http.get(api.GET_LOGOUT)
+}
+
+export const userinfo = () => {
+    return http.get(api.GET_USERINFO)
 }
 
 
