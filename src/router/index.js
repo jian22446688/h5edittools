@@ -24,7 +24,7 @@ routerobj.beforeEach((to, from, next) => {
  */
 routerobj.beforeEach((to, from, next) => {
     //需要登录验证的路由
-    let user = routerobj.app.$options.store.getters.getUserInfo;
+    let user = window.localStorage.getItem('userInfo')
     console.log("打印用户信息")
     console.log(user);
     console.log("是否需要登录：" + to.matched.some(record => record.meta.userAuth))

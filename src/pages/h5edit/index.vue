@@ -54,7 +54,7 @@
         data() {
             return {
                 curActiveName: '/',
-                userName: '用户aaaabcd',
+                userName: '',
             };
         },
         computed: {
@@ -68,6 +68,10 @@
         mounted(){
             console.log("Index 获取用户信息")
             console.log(this.getIsLogin)
+            if(this.getIsLogin){
+                this.userName = '用户 ' + this.getIsLogin.name
+            }
+
         },
 
         methods: {
@@ -85,8 +89,9 @@
                     this.$Modal.confirm({title: "提示",content: "是否退出登录？？？",
                         onOk: () => {
                             this.$Message.success('成功退出登录');
-                            this.$store.dispatch('logout');
-                            // this.$router.push('/');
+                            this.$store.dispatch('logout').then(res => {
+                                this.$router.go(0);
+                            });
                         }
                     })
                 }

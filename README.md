@@ -30,7 +30,10 @@
 * 启动服务器
     
     ```
-    npm run runserver
+    需要安装 node-dev 
+    
+    # node-dev ./bin/www
+    npm run runserver  
     ```
 
 * 打开浏览器
@@ -53,24 +56,13 @@
 ```
 ├── README.md
 ├── build
-│   ├── build.js
-│   ├── check-versions.js
-│   ├── logo.png
-│   ├── utils.js
-│   ├── vue-loader.conf.js
-│   ├── webpack.base.conf.js
-│   ├── webpack.dev.conf.js
-│   └── webpack.prod.conf.js
 ├── config
-│   ├── dev.env.js
-│   ├── index.js
-│   ├── prod.env.js
-│   └── test.env.js
+│ 
 ├── favicon.ico
 ├── index.html
 ├── package-lock.json
 ├── package.json
-├── server
+├── server  // 服务器目录
 │   ├── app.js
 │   ├── bin
 │   │   └── www
@@ -106,7 +98,7 @@
 │   │   ├── plugin
 │   │   └── property
 │   ├── main.js
-│   ├── models
+│   ├── models   //数据模型文件
 │   │   ├── Element.js
 │   │   ├── Page.js
 │   │   ├── Theme.js
@@ -129,12 +121,20 @@
 │       └── util.js
 ├── static
 └── test
-    └── unit
-        ├── coverage
-        ├── jest.conf.js
-        ├── setup.js
-        └── specs
+    
+    
+    
 ```
+
+
+## 项目状态
+
+*  使用 服务端session 客户端localStorage 保持用户登录状态
+
+
+
+
+
 
 
 ## 启动项目 
