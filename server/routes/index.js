@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var usersRouter = require('./users');
-var editRouter = require('./api/edit/edit')
+var usersRouter = require('./api/users.js');
+var editRouter = require('./api/edit.js')
 router.use(function (req, res, next) {
     res.data = {
         code: 0,

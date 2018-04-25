@@ -27,7 +27,7 @@ const routers = [
                     title: "个人作品",
                     userAuth: true,
                 },
-                component: (resolve) => require(['@/pages/h5edit/homePage/home.vue'], resolve),
+                component: (resolve) => require(['@/pages/h5edit/homePage/UserHome.vue'], resolve),
             },
         ]
     },

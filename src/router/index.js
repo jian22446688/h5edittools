@@ -12,12 +12,14 @@ const RouterConfig = {
 }
 const routerobj = new Router(RouterConfig);
 
+/**
+ * 顶部进度条 开始
+ */
 routerobj.beforeEach((to, from, next) => {
   iView.LoadingBar.start();
   util.title(to.meta.title);
   next()
 });
-
 
 /**
  * 认证用户是否登录
@@ -25,8 +27,6 @@ routerobj.beforeEach((to, from, next) => {
 routerobj.beforeEach((to, from, next) => {
     //需要登录验证的路由
     let user = window.localStorage.getItem('userInfo')
-    console.log("打印用户信息")
-    console.log(user);
     console.log("是否需要登录：" + to.matched.some(record => record.meta.userAuth))
     if(to.matched.some(record => record.meta.userAuth)){
         if (!user) {
@@ -40,17 +40,28 @@ routerobj.beforeEach((to, from, next) => {
 })
 
 
+/**
+ * 判断是否没有参数进入编辑器页面
+ */
+routerobj.beforeEach((to, from, next) => {
+    if(to.path === '/edit'){
+        if(to.query.itemId){
+            next();
+        } else {
+            next('/');
+        }
+    } else {
+        next()
+    }
+});
 
-
-
-
-
-
+/**
+ * 顶部进度条 结束
+ */
 routerobj.afterEach((to, from, next)=>{
   iView.LoadingBar.finish();
 
 });
-
 
 export default routerobj;
 

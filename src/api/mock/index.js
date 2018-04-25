@@ -10,38 +10,38 @@ const getTempobj = (obj) =>{
     }
 }
 
-Mock.setup({
-  timeout: '200-500'
-})
-
-Mock.mock('/api/data', (req, res) => {
-    return {
-        data: ['a', 'b']
-    }
-})
-
-Mock.mock('/api/getUserThemeList', {
-  'list|1-10': [{
-    'id|+1': 1,
-    'title|2-6': '@title',
-    'description|2-3': '@title',
-    'test': {
-      'name': 'name'
-    }
-  }]
-})
-
-
-Mock.mock('/api/gettest', {
-  'list|1-20': [
-    {
-      'color' : '@color',
-    }
-  ]
-})
+// Mock.setup({
+//   timeout: '200-500'
+// })
+//
+// Mock.mock('/api/data', (req, res) => {
+//     return {
+//         data: ['a', 'b']
+//     }
+// })
+//
+// Mock.mock('/api/getUserThemeList', {
+//   'list|1-10': [{
+//     'id|+1': 1,
+//     'title|2-6': '@title',
+//     'description|2-3': '@title',
+//     'test': {
+//       'name': 'name'
+//     }
+//   }]
+// })
+//
+//
+// Mock.mock('/api/gettest', {
+//   'list|1-20': [
+//     {
+//       'color' : '@color',
+//     }
+//   ]
+// })
 
 //获取首页链表
-Mock.mock('/api/getThemeList?type=', getTempobj(temp.themeList));
+//Mock.mock('/api/getThemeList?type=', getTempobj(temp.themeList));
 
 //获取验证码
 // Mock.mock( /(\/api\/)[\w/]+/, getTempobj({

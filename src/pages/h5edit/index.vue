@@ -66,10 +66,11 @@
             }
         },
         mounted(){
-            console.log("Index 获取用户信息")
-            console.log(this.getIsLogin)
+
             if(this.getIsLogin){
                 this.userName = '用户 ' + this.getIsLogin.name
+            }else {
+                console.log("Index 获取用户信息: 失败" )
             }
 
         },
