@@ -1,0 +1,91 @@
+.editor, .editor-layout, .c-layout-content {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+.layout-left-icon {
+    width: 150px;
+    height: 60px;
+    line-height: 60px;
+    .back-icon{
+        top: 16px;
+        position: absolute;
+        left: 0;
+    }
+}
+
+.c-layout-content{
+    position: relative;
+    text-align: left;
+    background-color: #e9eaec;
+}
+.layout-logo{
+    width: 100px;
+    height: 30px;
+    margin-left: 16px;
+    background: #5b6270;
+    border-radius: 3px;
+    float: left;
+    position: relative;
+    top: 15px;
+    left: 20px;
+    span {
+        color: #fff;
+    }
+}
+.layout-nav{
+    width: 100%;
+    height: 100%;
+    margin-right: 20px;
+}
+
+.c-layout-componetns-icon {
+    //background-color: #19be6b;
+    height: 60px;
+}
+.layout-btn {
+    position: relative;
+    float: right;
+
+    height: 60px;
+    text-align: right;
+}
+.c-layout-left-page{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    z-index: 990;
+    background-color: #dddee1;
+
+}
+.c-layout-right-control{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    z-index: 990;
+
+    background-color: #dddee1;
+}
+.c-layout-content-stage {
+    position: relative;
+    margin: 0;
+    width: 380px;
+    height: 584px;
+    top: -50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid #dddee1;
+    z-index: 20;
+    background: -webkit-linear-gradient(top, transparent 15px, #ccc 16px),
+    -webkit-linear-gradient(left, transparent 15px, #ccc 16px);
+    background-size: 16px 16px;
+    background-repeat: repeat;
+}
