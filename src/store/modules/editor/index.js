@@ -5,28 +5,34 @@ import Theme from '@/models/Theme';
 import Page from '@/models/Page';
 
 const state = {
+
     isLogin: false,
+
     homeThemeList: [],
+
     themeList: [],
+
     isShowThemeedit: false,
+
     editorElement: {}, // 当前编辑的层
+
     editorPage: { elements: [] }, // 当前编辑的页面
-    editorTheme: {
-        title: '',
-        description: '',
-        canvasHeight: 504,
-        // pages: []
-    }, // 正在编辑的主题
+
+    editorTheme: { title: '', description: '', canvasHeight: 504 }, // 正在编辑的主题
+
+    userUpimg_List: { count: 0, data: [] },
+
+    themeUpimg_List: { count: 0, data: [] },
+
+    publicUpimg_List: { count: 0, data: [] },
 }
 
 /**
- *
  * **************************************************************************************************************************************************************
  *
  * actions
  *
  * **************************************************************************************************************************************************************
- *
  */
 const actions = {
 
@@ -45,44 +51,104 @@ const actions = {
     },
 
     // 刷新编辑页面的 获取单个页面
-    pageFindOne({commit}, itemid){
+    pageFindOne({ commit }, itemid){
         if(itemid){
-            url.pageFindnoe(itemid).then(res => {
-                commit(types.SET_CUR_EDITOR_THEME, res.body);
+            return new Promise((resolve, reject) => {
+                url.pageFindnoe(itemid).then(res => {
+                    if(res.code === 0){
+                        commit(types.SET_CUR_EDITOR_THEME, res.body);
+                        reject()
+                    }else {
+                        resolve()
+                    }
+                })
             })
         }
     },
 
     //获取首页h5页面
-    getHomeThemeList({commit}){
+    getHomeThemeList({ commit }){
         url.getHomeThemeList().then((res) => {
             commit(types.GET_HOME_THEME_LIST, res.body)
         })
     },
 
     //获取用户制作的页面
-    getUserThemeList({commit}, userid){
+    getUserThemeList({ commit }, userid){
         url.getUserThemeList(userid).then((res) => {
             commit(types.GET_USER_LIST, res.body)
         })
     },
 
     //删除一个H5作品
-    userDeleteTheme({commit}, themeItem){
-       return Promise.resolve( url.deleteTheme(themeItem._id).then(() =>{
+    userDeleteTheme({ commit }, themeItem){
+       return Promise.resolve(url.deleteTheme(themeItem._id).then(() =>{
             commit(types.DELETE_THEME, themeItem)
        }))
+    },
+
+    //获取用户上传的图片
+    userUpimg_List({ commit, state }, param){
+        return new Promise((resolve, reject) => {
+            url.getUserUpimg(this.state.user.userinfo._id, param).then(res => {
+                if(res.code === 0) {
+                    commit(types.GET_USER_IMG_LIST, res.body)
+                    resolve()
+                }else {
+                    reject()
+                }
+            })
+        })
+    },
+
+    //获取用户制作的H5上传图片
+    themeUpimg_List({ commit, state }, param){
+        let themeid = state.editorTheme._id
+        if(themeid){
+            return new Promise((resolve, reject) => {
+                url.getThemeUpimg(themeid, param).then(res => {
+                    if(res.code === 0) {
+                        commit(types.GET_THEME_IMG_LIST, res.body)
+                        resolve()
+                    }else {
+                        reject()
+                    }
+                })
+            })
+        }
+    },
+
+    //获取公共图片
+    publicUpimg_List({ commit }, param){
+       return new Promise((resolve, reject) => {
+           url.getPublicUpimg(param).then(res => {
+               if(res.code === 0){
+                   commit(types.GET_PUBLIC_IMG_LIST, res.body)
+                   resolve()
+               }else {
+                   reject()
+               }
+           })
+       })
+    },
+
+    //删除图片
+    deleteImg({ commit }, imgid){
+        return Promise.resolve(url.deleteImg(imgid).then(res => {}))
     }
+
+
+
+
+
 }
 
 /**
- *
  * **************************************************************************************************************************************************************
  *
  * mutations
  *
  * **************************************************************************************************************************************************************
- *
  */
 const mutations = {
     // createTheme
@@ -96,16 +162,13 @@ const mutations = {
     // delete_theme
     [types.DELETE_THEME](state, data){
         state.themeList.findIndex((value, index)=>{
-            if(value === data){
-                state.themeList.splice(index, 1)
-            }
+            if(value === data) state.themeList.splice(index, 1)
         })
     },
 
     // add_theme_success
     [types.ADD_THEME_SUCCESS](state, data){
-        console.log(data)
-        state.editorTheme.userId = data._id;
+        state.editorTheme._id = data._id;
     },
 
     // add_page
@@ -143,9 +206,7 @@ const mutations = {
     // delete_page
     [types.DELETE_PAGE](state, data){
         state.editorTheme.pages.findIndex((value, index, arr)=> {
-            if(value === data){
-                state.editorTheme.pages.splice(index, 1)
-            }
+            if(value === data) state.editorTheme.pages.splice(index, 1)
         })
     },
 
@@ -172,19 +233,48 @@ const mutations = {
     //get_user_theme_list
     [types.GET_USER_LIST](state, data){
         state.themeList = data
+    },
+
+    //获取用户上传图片
+    // get_user_img_list
+    [types.GET_USER_IMG_LIST](state, data){
+        state.userUpimg_List.count = data.count
+        state.userUpimg_List.data[data.index] = data.data
+    },
+
+    //get_theme_img_list
+    [types.GET_THEME_IMG_LIST](state, data){
+        state.themeUpimg_List.count = data.count
+        state.themeUpimg_List.data[data.index] = data.data
+    },
+
+    //get_public_img_list
+    [types.GET_PUBLIC_IMG_LIST](state, data){
+        state.publicUpimg_List.count = data.count
+        state.publicUpimg_List.data[data.index] = data.data
+    },
+
+    // del_delete_img
+    [types.DEL_DELTE_IMG](state, name){
+        state[name].count--
+        state[name].data = []
+    },
+
+    // add_upload_img
+    [types.ADD_UPLOAD_IMG](state, name){
+      state[name].count++
+      state[name].data = []
     }
 
 
 }
 
 /**
- *
  * **************************************************************************************************************************************************************
  *
  * getters
  *
  * **************************************************************************************************************************************************************
- *
  */
 const getters = {
 

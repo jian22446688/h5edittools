@@ -74,11 +74,10 @@
         created() {
             this.itemId = this.$route.query.itemId
             if(this.itemId){
-                this.$store.dispatch('pageFindOne', this.itemId)
-            } else {
-                console.log("没有传入数据")
-                // this.$router.go(-1)
-
+                this.$store.dispatch('pageFindOne', this.itemId).then(() => {
+                    this.$Message.error('获取编辑数据')
+                    this.$router.go(-1)
+                }).catch(err => {})
             }
         },
         mounted() {
@@ -109,7 +108,7 @@
                     // TODO 更新成功
                     setTimeout(()=>{
                         this.saveloading = false
-                    }, 500)
+                    }, 300)
                 })
             },
             //设置

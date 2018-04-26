@@ -20,10 +20,12 @@ router.get('/pages/:itemid', function (req, res) {
             res.data.body = data
             res.json(res.data)
         }else {
+            res.data.code = -1
             res.data.message = '获取数据失败，没有查找到数据'
             res.json(res.data)
         }
     }).catch((err)=>{
+        res.data.code = -1
         res.data.message = '获取数据失败'
         res.json(res.data)
     })
@@ -170,8 +172,8 @@ router.post('/files/upload/:userid/:themeid', function (req, res) {
                     }else {
                         let imgSize = imageSize(uploadPath + userpath + newName);
                         let obj = {
-                            userId: req.params.userid,
-                            themeId: req.params.themeid,
+                            userId: req.params.userid || 'all',
+                            themeId: req.params.themeid || 'all',
                             name: path.basename(req.file.originalname),
                             fileName: newName,
                             width: imgSize.width,
@@ -220,6 +222,7 @@ router.post('/files/uploads', function (req, res) {
             // 对临时文件转存，fs.rename(oldPath, newPath,callback);
             let userpath = (req.query.userid || 'all')  + '/'
             createFolder(uploadPath + userpath)
+            let uf = []
             for (let i = 0; i < files.length; i++) {
                 let filename = 'img_' + uuidv1().replace(/-/g, '');
                 let newName = filename + path.extname(files[i].originalname)
@@ -242,12 +245,17 @@ router.post('/files/uploads', function (req, res) {
                             fileUrl: 'upload/' + userpath + newName,
                         }
                         //保存图片数据 到数据库
-                        File.create(obj).then(() => {
-                        })
+                        File.create(obj).then(() => { })
                     }
                 })
+                let ufo = {
+                    name: path.basename(files[i].originalname),
+                    url: 'upload/' + userpath + newName,
+                }
+                uf.push(ufo)
             }
             res.data.message = '上传文件成功'
+            res.data.body = uf
             res.json(res.data)
         }else {
             res.code = -1
@@ -261,10 +269,22 @@ router.post('/files/uploads', function (req, res) {
  * 获取公开的图片文件
  */
 router.get('/files/uploads', function (req, res) {
-    File.find({userId: 'all', 'status': 1}).sort({'created_time': -1}).then((data) => {
-        res.data.message = '获取数据成功'
-        res.data.body = data
-        res.json(res.data)
+    let pageSize = Number(req.query.pageSize || 20)
+    let pageIndex = Number(req.query.pageIndex || 1) - 1
+    File.count({userId: 'all', 'status': 1}).then((data) => {
+        if(data){
+            File.find({userId: 'all', 'status': 1})
+                .limit(pageSize).skip(pageIndex * pageSize)
+                .sort({'created_time': -1}).then((redata) => {
+                res.data.message = '获取数据成功'
+                res.data.body = {count: data, data: redata, index: pageIndex + 1 }
+                res.json(res.data)
+            })
+        }else {
+            res.data.code = -1
+            res.data.message = '获取数据失败'
+            res.json(res.data)
+        }
     })
 })
 
@@ -272,18 +292,66 @@ router.get('/files/uploads', function (req, res) {
  * 获取用户制作H5页面上传的图片文件
  * @param { ?userid=xxxxx && themeid=xxxx }
  */
-router.get('/files/user/img/', function (req, res) {
+router.get('/files/user/img', function (req, res) {
+    if(req.query.userid || req.query.themeid){
+        let pageSize = Number(req.query.pageSize || 20)
+        let pageIndex = Number(req.query.pageIndex || 1) - 1
+        if(req.query.userid){
+            File.count({userId: req.query.userid, 'status': 1}).then((data) => {
+                if(data){
+                    File.find({userId: req.query.userid, 'status': 1})
+                        .limit(pageSize).skip(pageIndex * pageSize)
+                        .sort({'created_time': -1}).then((redata) => {
+                        res.data.message = '获取数据成功'
+                        res.data.body = {count: data, data: redata, index: pageIndex + 1 }
+                        res.json(res.data)
+                    })
+                } else {
+                    res.data.code = -1
+                    res.data.message = '获取数据失败'
+                    res.json(res.data)
+                }
+            })
+        }else {
+            File.count({themeId: req.query.themeid, 'status': 1}).then((data) => {
+                if(data){
+                    File.find({themeId: req.query.themeid, 'status': 1})
+                        .limit(pageSize).skip(pageIndex * pageSize)
+                        .sort({'created_time': -1}).then((redata) => {
+                        res.data.message = '获取数据成功'
+                        res.data.body = {count: data, data: redata, index: pageIndex + 1 }
+                        res.json(res.data)
+                    })
+                } else {
+                    res.data.code = -1
+                    res.data.message = '获取数据失败'
+                    res.json(res.data)
+                }
+            })
+        }
+    }else {
+        res.data.code = -1
+        res.data.message = '用户id不能为空'
+        res.data.body = data
+        res.json(res.data)
+    }
+})
+
+/**
+ * 获取图片数量
+ */
+router.get('/files/user/img/count', function(req, res){
     if(req.query.userid || req.query.themeid){
         if(req.query.userid){
-            File.find({userId: req.query.userid, 'status': 1}).sort({'created_time': -1}).then((data) => {
+            File.count({userId: req.query.userid, 'status': 1}).then((data) => {
                 res.data.message = '获取数据成功'
-                res.data.body = data
+                res.data.body = { count: data }
                 res.json(res.data)
             })
         }else {
-            File.find({themeId: req.query.themeid, 'status': 1}).sort({'created_time': -1}).then((data) => {
+            File.count({themeId: req.query.themeid, 'status': 1}).then((data) => {
                 res.data.message = '获取数据成功'
-                res.data.body = data
+                res.data.body = { count: data }
                 res.json(res.data)
             })
         }

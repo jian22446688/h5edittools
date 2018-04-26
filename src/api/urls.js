@@ -37,14 +37,46 @@ export const saveTheme = (theme) => {
 }
 
 export const updateTheme = (themeid) => {
-    return http.put('api/edit/pages/'+ themeid._id, themeid)
+    return http.put('/api/edit/pages/' + themeid._id, themeid)
 }
 
 export const deleteTheme = (themeid) => {
-    return http.del('api/edit/pages',themeid)
+    return http.del('/api/edit/pages', themeid)
 }
 
-export const pageFindnoe = (themeid) =>{
-    return http.get('api/edit/pages/'+themeid)
+export const pageFindnoe = (themeid) => {
+    return http.get('/api/edit/pages/' + themeid)
 }
+
+//获取用户上传的图片 和公共资源图片
+export const getUserUpimg = (userid, param) => {
+    return http.get('/api/edit/files/user/img?userid='
+        + userid + '&pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex)
+}
+
+export const getThemeUpimg = (themeid, param) => {
+    return http.get('/api/edit/files/user/img?themeid='
+        + themeid + '&pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex)
+}
+
+export const getPublicUpimg = (param) => {
+    return http.get('/api/edit/files/uploads?pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex)
+}
+
+export const deleteImg = (imgid) => {
+    return http.del('/api/edit/files/upload', imgid)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 

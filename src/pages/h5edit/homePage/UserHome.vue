@@ -22,7 +22,7 @@
                                     <div class="cover">
                                         <div class="toolbar">
                                             <Tooltip content="编辑" placement="top">
-                                                <i style="cursor: pointer;" @click="toEditor(item.userId)"><Icon size="22" type="edit"></Icon></i>
+                                                <i style="cursor: pointer;" @click="toEditor(item)"><Icon size="22" type="edit"></Icon></i>
                                             </Tooltip>
                                             <Tooltip content="删除" placement="top">
                                                 <i style="cursor: pointer;" @click="deleteTheme(item)"><Icon size="22" type="trash-a"></Icon></i>
@@ -87,7 +87,7 @@
         methods: {
             toEditor(item){
                 console.log("编辑：" + item);
-                this.$router.push('/edit')
+                this.$router.push({ path: '/edit', query: { itemId: item._id }})
             },
             deleteTheme(item){
                 console.log("删除：" + item);
@@ -114,7 +114,7 @@
                 //todo 访问网络保存当创建的页面
                 this.$store.dispatch('saveTheme', JSON.parse(JSON.stringify(this.$store.state.editor.editorTheme))).then((res) => {
                     // todo 跳转到编辑页面
-                    this.$router.replace({ path: '/edit', query: { itemId: this.$store.state.editor.editorTheme.userId }})
+                    this.$router.push({ path: '/edit', query: { itemId: this.$store.state.editor.editorTheme._id }})
                 });
                 //清空 创建也没的数据
                 this.inputDes = "";

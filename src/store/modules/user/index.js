@@ -7,7 +7,9 @@ const state = {
     userinfo: null,
     pageList: [],
     varifyimg: '',
-    loginResult: undefined
+    loginResult: undefined,
+
+
 }
 
 const actions = {
