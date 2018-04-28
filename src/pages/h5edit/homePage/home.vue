@@ -2,7 +2,7 @@
     @import "./home.less";
 </style>
 <template>
-    <div class="my-themes">
+    <div class="my-themes" @keyup.enter="show2()">
         <div class="container">
             <Card dis-hover style="margin-bottom: 16px;">
                 <div class="c-menu-bg">
@@ -41,6 +41,20 @@
                 </div>
             </div>
         </div>
+
+        <input type="text" @keyup.13="show()">
+        <hr>
+        <input type="text" ">
+        <hr>
+        <input type="text" @keyup.up="show3()">
+        <hr>
+        <input type="text" @keyup.down="show4()">
+        <hr>
+        <input type="text" @keyup.left="show5()">
+        <hr>
+        <div type="text" @keyup.right="show6()"/>
+        <hr>
+
 
         <perview v-model="modal_preView"></perview>
     </div>
@@ -85,6 +99,26 @@
                     }
                 })
             },
+
+            show: function () {
+                alert('你按了回车！');
+            },
+            show2: function () {
+                alert('你按了回车！');
+            },
+            show3: function () {
+                alert('你按了上键！');
+            },
+            show4: function () {
+                alert('你按了下键！');
+            },
+            show5: function () {
+                alert('你按了左键！');
+            },
+            show6: function () {
+                alert('你按了右键！');
+            },
+
             showPreView(item_id){
                 console.log("预览：" + item_id);
                 this.modal_preView = true;

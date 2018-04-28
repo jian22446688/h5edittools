@@ -3,7 +3,7 @@ import * as api from './api'
 
 // user 用户 URl
 export const getHomeThemeList = () => {
-  return http.get('/api/edit/pages')
+  return http.get('/api/edit/page/build')
 }
 
 export const getUserThemeList = (userid) => {
@@ -30,7 +30,6 @@ export const userinfo = () => {
     return http.get(api.GET_USERINFO)
 }
 
-
 // editor 编辑器
 export const saveTheme = (theme) => {
     return http.post('/api/edit/pages', theme)
@@ -51,16 +50,22 @@ export const pageFindnoe = (themeid) => {
 //获取用户上传的图片 和公共资源图片
 export const getUserUpimg = (userid, param) => {
     return http.get('/api/edit/files/user/img?userid='
-        + userid + '&pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex)
+        + userid + '&pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex
+        + '&time=' + Date.now()
+    )
 }
 
 export const getThemeUpimg = (themeid, param) => {
     return http.get('/api/edit/files/user/img?themeid='
-        + themeid + '&pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex)
+        + themeid + '&pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex
+        + '&time=' + Date.now()
+    )
 }
 
 export const getPublicUpimg = (param) => {
-    return http.get('/api/edit/files/uploads?pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex)
+    return http.get('/api/edit/files/uploads?pageSize=' + param.pageSize + '&pageIndex=' + param.pageIndex
+        + '&time=' + Date.now()
+    )
 }
 
 export const deleteImg = (imgid) => {

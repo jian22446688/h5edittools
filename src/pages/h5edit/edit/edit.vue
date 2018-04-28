@@ -10,10 +10,10 @@
                         </div>
                     </span>
                     <span class="c-layout-componetns-icon">
-                        <Button type="dashed"><Icon type="compose" color="#e9eaec"  size="28"></Icon></Button>
-                        <Button type="dashed" @click="imgModal = true"><Icon type="image" color="#e9eaec"  size="28"></Icon></Button>
-                        <Button type="dashed"><Icon type="ios-videocam" color="#e9eaec"  size="28"></Icon></Button>
-                        <Button type="dashed"><Icon type="play" color="#e9eaec"  size="28"></Icon></Button>
+                        <Button type="dashed" title="文字" @click="eleTextBtn"><Icon type="compose" color="#e9eaec"  size="28"></Icon></Button>
+                        <Button type="dashed" title="图片" @click="imgModal = true"><Icon type="image" color="#e9eaec"  size="28"></Icon></Button>
+                        <Button type="dashed" title="形状" @click="eleShapeBtn"><Icon type="ios-videocam" color="#e9eaec"  size="28"></Icon></Button>
+                        <Button type="dashed" title="视频"><Icon type="play" color="#e9eaec"  size="28"></Icon></Button>
                     </span>
                     <span class="layout-btn">
                         <Button style="display: inline-block" @click="onSaveEvent" type="primary" :loading="saveloading">
@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="c-layout-content-stage">
-                    <EditPanelLayer></EditPanelLayer>
+                    <EditPanelLayer :elems.sync="editorPage.elements" :editorElement="editorElement"></EditPanelLayer>
                 </div>
 
                 <div class="c-layout-right-control">
@@ -40,8 +40,23 @@
             </Content>
         </Layout>
 
-        <imgModal v-model="imgModal" v-on:selectimg="onSelectimg"></imgModal>
+        <imgModal v-model="imgModal" v-on:selectimg="eleSelectimg"></imgModal>
 
+        <!-- 同上 -->
+        <input  @keyup.13="submit">
+
+        <input type="text" @keyup.13="show()">
+        <hr>
+        <input type="text" @keyup.enter="show2()">
+        <hr>
+        <input type="text" @keyup.up="show3()">
+        <hr>
+        <input type="text" @keyup.down="show4()">
+        <hr>
+        <input type="text" @keyup.left="show5()">
+        <hr>
+        <input type="text" @keyup.right="show6()">
+        <hr>
 
     </div>
 </template>
@@ -52,13 +67,15 @@
     import EditPanelLayer from '@/components/modals/EditPanel.vue'
     import imgModal from '@/components/modals/ImgModals.vue'
     export default {
+        name: "edit",
+
         components: {
             PageAndLayer: PageAndLayer,
             ProPertyLayer: ProPertyLayer,
             EditPanelLayer: EditPanelLayer,
             imgModal: imgModal
         },
-        name: "edit",
+
         data(){
             return {
                 isPageActiv: true,
@@ -67,10 +84,10 @@
                 canvasHeight: 504,
                 imgModal: false,
                 saveloading: false,
-                // 页面里面数据
                 itemId: null
             }
         },
+
         created() {
             this.itemId = this.$route.query.itemId
             if(this.itemId){
@@ -80,6 +97,25 @@
                 }).catch(err => {})
             }
         },
+
+        computed: {
+
+            themeId() {
+                return this.$store.state.editor.editorTheme._id
+            },
+
+            editorPage() {
+                return this.$store.state.editor.editorPage
+            },
+
+            editorElement() {
+                let ele = this.$store.state.editor.editorElement
+                return ele || {}
+            },
+
+
+        },
+
         mounted() {
             // window.onbeforeunload = onbeforeunload_handler;
             // window.onunload = onunload_handler;
@@ -95,10 +131,12 @@
 
         },
         methods: {
+
             //返回首页
             onBtnBackEvent(){
 
             },
+
             //保存
             onSaveEvent(){
                 this.saveloading = true
@@ -111,10 +149,12 @@
                     }, 300)
                 })
             },
+
             //设置
             onSettingEvent(){
 
             },
+
             // 预览
             onPreviewEvent(){
 
@@ -124,17 +164,67 @@
                 this.isPageActiv = !this.isPageActiv;
                 this.isLayerActiv = !this.isLayerActiv;
             },
+
             onPage(){
                 this.isLayerActiv = !this.isLayerActiv;
                 this.isPageActiv = !this.isPageActiv;
             },
-            onSelectimg(img){
+
+            submit(){
+                console.log('"enter')
+            },
+            show: function () {
+                alert('你按了回车！');
+            },
+            show2: function () {
+                alert('你按了回车！');
+            },
+            show3: function () {
+                alert('你按了上键！');
+            },
+            show4: function () {
+                alert('你按了下键！');
+            },
+            show5: function () {
+                alert('你按了左键！');
+            },
+            show6: function () {
+                alert('你按了右键！');
+            },
+
+            eleSelectimg(img){
                 console.log(img)
-            }
-            ,
+                let param = {
+                    type: 'pic',
+                    width: img.width,
+                    height: img.height,
+                    imgSrc: img.fileUrl,
+                }
+                this.$store.commit('ELE_ADD_TEXT', param)
+            },
+
+            eleTextBtn(){
+                let param = {
+                    type: 'text',
+                    text: '请输入文本',
+                    width: this.canvasWidth,
+                    lineHeight: 1.5,
+                }
+                this.$store.commit('ELE_ADD_TEXT', param)
+            },
+
+            eleShapeBtn(){
+
+            },
+
             ontest(){
                 console.log(this.pages);
-            }
+            },
+        },
+
+        destroyed(){
+            // 清楚当前编辑的 页面
+            this.$store.commit('CLEAR_EDIT_THEME')
         }
     }
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="wrap"  @mousedown="mousedown" @mouseup="mouseup">
-        <img  @dragstart="$event.preventDefault()" src="@/assets/logo.png" style="width:100%; height:100%;">
-        <Operate v-show="true"
+        <img  @dragstart="$event.preventDefault()" :src="host+element.imgSrc" style="width:100%; height:100%;">
+        <Operate v-show="showOperate"
                  @mousedown.native.stop="scaleMousedown"
                  @mouseup.native.stop="scaleMouseup"
                  @mousemove.native.stop="scaleMousemove"/>
@@ -10,6 +10,7 @@
 
 <script>
     import Operate from '@/components/module/Operate.vue'
+    import * as config from '@/api/config'
     export default {
         name: "pic-element",
         components: { Operate },
@@ -33,7 +34,7 @@
                 flag: false,
                 scaleFlag: false,
                 dirrection: '',
-                http: '',
+                host: config.caryHost,
                 imgsrc: '../../assets/logo.png'
             }
         },
@@ -161,6 +162,7 @@
         cursor: move;
     }
     .wrap img {
+        position: absolute;
         user-select: none;
     }
 </style>

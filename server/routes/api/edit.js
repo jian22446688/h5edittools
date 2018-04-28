@@ -14,7 +14,9 @@ const File = require('../../models/edit/file')
  * @parma { itemid }
  */
 router.get('/pages/:itemid', function (req, res) {
-    Theme.findOne({_id:req.params.itemid}).then((data) =>{
+    let uid = req.session.userinfo ? req.session.userinfo._id : undefined;
+    let pa = {_id:req.params.itemid, userId: uid}
+    Theme.findOne(uid ? pa : { _id:req.params.itemid }).then((data) =>{
         if(data){
             res.data.message = '获取一个页面数据成功'
             res.data.body = data
@@ -32,28 +34,46 @@ router.get('/pages/:itemid', function (req, res) {
 })
 
 /**
- * 需要验证 获取用户创建的 H5
+ * 需要验证 获取用户创建的 H5 需要验证
  * @parma {  }
  */
 router.get('/pages', function (req, res) {
     console.log(req.query.userid)
-    if(req.query.userid){
-        Theme.find({userId: req.query.userid}).sort({'update_item': -1}).then(data =>{
+    let uid = req.session.userinfo ? req.session.userinfo._id : undefined
+    Theme.find({ userId: uid || req.query.userid }).sort({ 'update_item': -1 }).then(data =>{
+        if (data) {
             res.data.message = '获取列表成功';
             res.data.body = data;
             res.json(res.data)
-        })
-    }else {
-        Theme.find({status: 1}).sort({'update_item': -1}).then(data =>{
-            res.data.message = '获取发布列表成功';
-            res.data.body = data;
+        }else {
+            res.data.code = -1
+            res.data.message = '获取数据失败';
             res.json(res.data)
-        })
-    }
+        }
+    })
+})
+
+
+/**
+ * 获取发布的 H5 页面
+ */
+router.get('/page/build', function (req, res) {
+    Theme.find({status: 1}).sort({'update_item': -1}).then(data =>{
+        if (data) {
+            res.data.message = '获取发布列表成功'
+            res.data.body = data
+            res.json(res.data)
+        }else {
+            res.data.code = -1
+            res.data.message = '暂无发布数据'
+            res.data.body = data
+            res.json(res.data)
+        }
+    })
 })
 
 /**
- * 创建新的 H5 页面
+ * 创建新的 H5 页面 需要验证
  * @parma { post h5 theme.modal data }
  */
 router.post('/pages', auth.userLoginAuth, function (req, res) {
@@ -72,13 +92,14 @@ router.post('/pages', auth.userLoginAuth, function (req, res) {
 })
 
 /**
- * 保存更改的H5页面
+ * 保存更改的H5页面 需要验证
  * @parma { itemid  h5 body: theme.modal data }
  */
 router.put('/pages/:itemid',auth.userLoginAuth, function (req, res) {
     let id = req.params.itemid
     req.body.updated_time = new Date();
-    Theme.findOneAndUpdate({ _id: id}, req.body, { setDefaultsOnInsert: true, runValidators: true } )
+    Theme.findOneAndUpdate({ _id: id, userId: req.session.userinfo._id}, req.body,
+        { setDefaultsOnInsert: true, runValidators: true })
         .then(data => {
             if(data){
                 res.data.message = '更新成功'
@@ -96,12 +117,14 @@ router.put('/pages/:itemid',auth.userLoginAuth, function (req, res) {
 })
 
 /**
- * 删除 H5页面
+ * 删除 H5页面 需要验证
  * @param { itemid }
  */
 router.delete('/pages/:itemid', function (req, res) {
     if(req.params.itemid){
-        Theme.remove({ _id: req.params.itemid}).then(data => {
+        let uid = req.session.userinfo ? req.session.userinfo._id : undefined;
+        let pa = {_id:req.params.itemid, userId: uid}
+        Theme.remove(uid ? pa : { _id:req.params.itemid }).then(data => {
             res.data.message = '删除成功'
             res.data.body = data
             res.json(res.data)
@@ -112,7 +135,7 @@ router.delete('/pages/:itemid', function (req, res) {
         })
     }else {
         res.data.code = -1
-        res.data.message = '页面ID不能为空'
+        res.data.message = '页面删除错误'
         res.json(res.data)
     }
 
@@ -369,15 +392,35 @@ router.get('/files/user/img/count', function(req, res){
  */
 router.delete('/files/upload/:fileid', function (req, res) {
     if(req.params.fileid){
-        File.findOneAndUpdate({ _id: req.params.fileid }, { status: 0 }).then(() => {
-            res.data.message = '删除成功'
-            res.json(res.data)
+        let uid = req.session.userinfo ? req.session.userinfo._id : undefined;
+        let pa = {_id:req.params.fileid, userId: uid}
+        let par = uid ? pa : { _id: req.params.fileid }
+        console.log(par)
+        File.findOneAndUpdate(par , { status: 0 }).then((data) => {
+            if (data) {
+                res.data.message = '删除成功'
+                res.data.body = data
+                res.json(res.data)
+            }else {
+                res.data.message = '删除失败，数据不正确'
+                res.data.body = data
+                res.json(res.data)
+            }
         })
     }else {
         res.code = -1
         res.data.message = '文件ID不能为空'
         res.json(res.data)
     }
+})
+
+router.get('/file/:id', function (req, res) {
+
+    File.findOne({ _id: req.params.id }).then(data => {
+        res.data.message = '获取文件成功'
+        res.data.body = data
+        res.json(res.data)
+    })
 })
 
 module.exports = router

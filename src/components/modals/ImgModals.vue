@@ -7,7 +7,7 @@
                     <MenuItem name="userUpimg_List"><Icon type="android-home"></Icon>我的图片</MenuItem>
                     <MenuItem name="publicUpimg_List"><Icon type="chatbubbles"></Icon>公用图片</MenuItem>
                 </Menu>
-                <Upload v-if="curMenu != 'publicUpimg_List'" style="margin-top: 60px" ref="upload"
+                <Upload v-show="curMenu != 'publicUpimg_List'" style="margin-top: 60px" ref="upload"
                         name="uploadFile"
                         :action="uploadUrl + userinfo._id + '/' + editorTheme._id"
                         :show-upload-list="false"
@@ -16,6 +16,7 @@
                         :on-success="handleSuccess"
                         :on-format-error="handleFormatError"
                         :on-exceeded-size="handleMaxSize"
+                        :before-upload="handleBeforeUpload"
                         multiple
                         :format="['jpg','jpeg','png']">
                     <Button style="position: absolute; bottom: 0" type="primary" @click="onBtnUpload" size="large" long>上传图片</Button>
@@ -26,7 +27,6 @@
                 <div style="width: 100%; margin: 0 auto; ">
                     <div style="margin-left: 16px; text-align: left">
                         <div class="img-upload-list" v-for="item in uploadList">
-                            <!--<template v-if="item.status === 'finished'">-->
                             <template >
                                 <img :src="baseHost + item.fileUrl">
                                 <div class="img-upload-list-cover">
@@ -34,13 +34,10 @@
                                     <Button type="primary" shape="circle" @click="onBtnSelectImg(item)" >使用</Button>
                                 </div>
                             </template>
-                            <!--<template v-else>-->
-                                <!--<Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>-->
-                            <!--</template>-->
                         </div>
                     </div>
                 </div>
-                <Page class="pageindex" :current="curPage" :total="themeUpimg_List.count" @on-change="onPageChange" :page-size="20" size="small"></Page>
+                <Page class="pageindex" :current="curPage" :total="curSum" @on-change="onPageChange" :page-size="20" size="small"></Page>
             </Col>
         </Row>
     </Modal>
@@ -60,23 +57,11 @@
                 modal_preView: false,
                 baseHost: config.caryHost,
                 uploadUrl: config.caryHost + 'api/edit/files/upload/',
-                defaultList: [
-                    // {
-                    //     'name': 'a42bdcc1178e62b4694c830f028db5c0',
-                    //     'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
-                    // },
-                    // {
-                    //     'name': 'bc7521e033abdd1e92222d733590f104',
-                    //     'url': 'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
-                    // },
-                    // {
-                    //     'name': 'a42bdcc1178e62b4694c830f028db5c0',
-                    //     'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
-                    // },
-                ],
+                defaultList: [],
                 uploadList: [],
                 pageList: [],
                 visible: false,
+                curSum: 0,
                 curPage: 1,
                 curMenu: 'themeUpimg_List',
             }
@@ -85,8 +70,9 @@
             value(val){
                 this.modal_preView = val;
             },
-            themeUpimg_List(val){
-
+            themeUpimg_List(val, old){
+                console.log('数据变好了：'+ val)
+                console.log('数据变好了o：'+ old)
             }
         },
         created() {
@@ -128,11 +114,20 @@
             },
 
             // 更新显示数据
-            updateImgList(isup=false){
+            updateImgList(isup){
                 // isup  true 必定更新  false 判断是否有缓存数据有就不用访问网络
                 if(isup){
                     this.$store.dispatch(this.curMenu, { pageSize: 20, pageIndex: this.curPage }).then(() => {
-                        this.$nextTick(() => { this.uploadList = this[this.curMenu].data[this.curPage] })
+                        this.$nextTick(() => {
+                            console.log('刷新数据')
+                            this.uploadList = this[this.curMenu].data[this.curPage]
+                            this.curSum = this[this.curMenu].count
+                            console.log(this.curSum);
+                        })
+                    }).catch(err => {
+                        this.uploadList = []
+                        this.$store.commit('IMG_CLAER_DATA', this.curMenu)
+                        this.curSum = 0
                     })
                 }else {
                     if(this[this.curMenu].data[this.curPage]){
@@ -141,9 +136,13 @@
                         this.$store.dispatch(this.curMenu, { pageSize: 20, pageIndex: this.curPage }).then(() => {
                             this.$nextTick(() => {
                                 this.uploadList = this[this.curMenu].data[this.curPage]
+                                this.curSum = this[this.curMenu].count
+                                console.log(this.curSum);
                             })
                         }).catch(err => {
-                            this.$Message.error('获取数据失败')
+                            this.uploadList = []
+                            this.$store.commit('IMG_CLAER_DATA', this.curMenu)
+                            this.curSum = 0
                         })
                     }
                 }
@@ -164,7 +163,11 @@
                     onCancel: () => {
                         this.$store.dispatch('deleteImg', file._id).then(() => {
                             this.$store.commit('DEL_DELTE_IMG', this.curMenu)
+                            this.uploadList = []
                             this.updateImgList(true)
+                            console.log("删除错误aa")
+                        }).catch(()=> {
+                            this.$Message.error('删除错误')
                         })
                     }
                 })
@@ -172,32 +175,24 @@
 
             //上传回调
             handleSuccess (res, file) {
-                this.uploadList.pop()
                 this.uploadList.unshift(res.body)
+                if (this.uploadList.length > 20) this.uploadList.pop()
+                this.curSum++
                 this.$store.commit('ADD_UPLOAD_IMG', this.curMenu)
             },
 
             handleFormatError (file) {
-                this.$Notice.warning({
-                    title: '文件格式不正确。',
-                    desc: '文件格式 ' + file.name + ' 不正确，请选择JPG或PNG.'
-                });
+                this.$Notice.warning({title: '文件格式不正确。', desc: '文件格式 ' + file.name + ' 不正确，请选择JPG或PNG.'});
             },
 
             handleMaxSize (file) {
-                this.$Notice.warning({
-                    title: '超出文件大小限制',
-                    desc: '文件  ' + file.name + ' 太大，不超过2M。'
-                });
+                this.$Notice.warning({title: '超出文件大小限制', desc: '文件  ' + file.name + ' 太大，不超过2M。'});
             },
 
             handleBeforeUpload () {
+                console.log("长度： "+this.$refs.upload.fileList.length)
                 const check = this.uploadList.length < 5;
-                if (!check) {
-                    this.$Notice.warning({
-                        title: '最多可以上传五张图片。'
-                    });
-                }
+                if (!check) { this.$Notice.warning({title: '每次最多可以上传五张图片。'}); }
                 return check;
             },
 
@@ -224,7 +219,7 @@
             onBtnSelectImg(imgitem) {
                 this.$emit('selectimg', imgitem)
                 this.modal_preView = false;
-            }
+            },
         }
     }
 </script>

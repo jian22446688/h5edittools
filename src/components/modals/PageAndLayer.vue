@@ -2,13 +2,13 @@
     <div style="height: 100%; width: 100%">
         <Row>
             <Col style="text-align: center;" span="12">
-            <div  style="margin-right: 0.5px" @click="onPage" class="c-left-tab-text"
+            <div @click="onPage" class="c-left-tab-text"
                   v-bind:class="{'c-layout-tab-n': !isPageActiv,'c-layout-tab-activ': isPageActiv }">
                 页面
             </div>
             </Col>
             <Col style="text-align: center" span="12">
-            <div style="margin-left: 0.5px" @click="onlayer" class="c-left-tab-text"
+            <div @click="onlayer" class="c-left-tab-text"
                  v-bind:class="{'c-layout-tab-n': !isLayerActiv,'c-layout-tab-activ': isLayerActiv }">
                 图层
             </div>
@@ -102,41 +102,48 @@
             })
         },
         methods: {
+
             onlayer(){
                 if(this.isLayerActiv){ return }
                 this.isPageActiv = !this.isPageActiv;
                 this.isLayerActiv = !this.isLayerActiv;
             },
+
             onPage(){
                 if(this.isPageActiv){ return }
                 this.isLayerActiv = !this.isLayerActiv;
                 this.isPageActiv = !this.isPageActiv;
             },
+
             onAddPage(){
                 // 添加空白页面
                 this.$store.commit('ADD_PAGE')
             },
+
             onPageCopy(page){
                 let par = { 'this': this,  'data': page}
                 this.$store.commit('COPY_PAGE', par)
             },
-            onPageDelete(page){
-                // this.pageList.splice(page, 1);
 
+            onPageDelete(page){
                 this.$Modal.confirm({title: "提示",content: "是否删除页面？？？",
                     onOk: () => { this.$store.commit('DELETE_PAGE', page) }
                 })
             },
+
             onPageUp(page){
                 this.$store.commit('UP_PAGE', page);
             },
+
             onPageDown(page){
                 this.$store.commit('DOWN_PAGE', page);
             },
+
             selectPage(page) {
                 if(this.curPage === page){ return }
                 this.$store.commit('SET_CUR_EDITOR_PAGE', page)
             },
+
             selectLayer(page){
                 if(this.curLayer === page){ return }
                 this.$store.commit('SET_CUR_EDITOR_ELEMENT', page)
@@ -150,6 +157,7 @@
         text-align: center;
         cursor: pointer;
         padding: 8px;
+        margin-right: 0.5px
     }
 
     .c-left-tab-page{

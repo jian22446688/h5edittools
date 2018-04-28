@@ -1,8 +1,8 @@
 import * as types from '../../mutation-types'
 import * as url from '../../../api/urls';
-import Element from '@/models/Element';
 import Theme from '@/models/Theme';
 import Page from '@/models/Page';
+import Element from '@/models/Element';
 
 const state = {
 
@@ -120,21 +120,29 @@ const actions = {
 
     //获取公共图片
     publicUpimg_List({ commit }, param){
-       return new Promise((resolve, reject) => {
-           url.getPublicUpimg(param).then(res => {
-               if(res.code === 0){
-                   commit(types.GET_PUBLIC_IMG_LIST, res.body)
-                   resolve()
-               }else {
-                   reject()
-               }
-           })
-       })
+        return new Promise((resolve, reject) => {
+            url.getPublicUpimg(param).then(res => {
+                if(res.code === 0){
+                    commit(types.GET_PUBLIC_IMG_LIST, res.body)
+                    resolve()
+                }else {
+                    reject()
+                }
+            })
+        })
     },
 
     //删除图片
     deleteImg({ commit }, imgid){
-        return Promise.resolve(url.deleteImg(imgid).then(res => {}))
+        return new Promise((resolve, reject) => {
+            url.deleteImg(imgid).then(res => {
+                if (res.code === 0) {
+                    resolve()
+                }else {
+                    reject()
+                }
+            })
+        })
     }
 
 
@@ -213,6 +221,7 @@ const mutations = {
     // set_cur_editor_theme 设置当前编辑的H5
     [types.SET_CUR_EDITOR_THEME](state, theme){
         state.editorTheme = theme
+        state.editorPage = state.editorTheme.pages[0]
     },
 
     // set_cur_editor_page 设置当前编辑的 页面
@@ -220,9 +229,27 @@ const mutations = {
         state.editorPage = page
     },
 
+    // clear_edit_theme
+    [types.CLEAR_EDIT_THEME](state){
+        state.editorTheme   = {}
+        state.editorPage    = {}
+        state.editorElement = {}
+    },
+
+    // todo 操作 正删改查 element 页面元素
+    [types.ELE_ADD_TEXT](state, ele) {
+        let el = new Element(ele)
+        state.editorElement = el
+        state.editorPage.elements.push(el)
+    },
+
+
+
+
     //set_cur_editor_element 设置当前编辑的元素
     [types.SET_CUR_EDITOR_ELEMENT](state, ele){
-        state.editorElement = data
+        console.log(ele)
+        state.editorElement = ele
     },
 
     //get_home_theme_list
@@ -239,31 +266,38 @@ const mutations = {
     // get_user_img_list
     [types.GET_USER_IMG_LIST](state, data){
         state.userUpimg_List.count = data.count
-        state.userUpimg_List.data[data.index] = data.data
+        state.userUpimg_List.data[data.index] = data.data.reverse()
     },
 
     //get_theme_img_list
     [types.GET_THEME_IMG_LIST](state, data){
         state.themeUpimg_List.count = data.count
-        state.themeUpimg_List.data[data.index] = data.data
+        state.themeUpimg_List.data[data.index] = data.data.reverse()
     },
 
     //get_public_img_list
     [types.GET_PUBLIC_IMG_LIST](state, data){
         state.publicUpimg_List.count = data.count
-        state.publicUpimg_List.data[data.index] = data.data
+        state.publicUpimg_List.data[data.index] = data.data.reverse()
     },
 
     // del_delete_img
     [types.DEL_DELTE_IMG](state, name){
         state[name].count--
         state[name].data = []
+        console.log("ddddd")
     },
 
     // add_upload_img
     [types.ADD_UPLOAD_IMG](state, name){
       state[name].count++
       state[name].data = []
+    },
+
+    // 清楚 vuex 里面的图片数据
+    [types.IMG_CLAER_DATA](state, name){
+        state[name].count = 0
+        state[name].data = []
     }
 
 

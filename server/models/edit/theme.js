@@ -29,6 +29,7 @@ var themeSchema = mongoose.Schema({
         default: 'upload/all/img_default.png'
     },
     canvasHeight: Number,
+
     created_time: {
         type: Date,
         default: new Date(),

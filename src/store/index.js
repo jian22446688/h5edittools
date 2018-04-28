@@ -15,7 +15,7 @@ const store = new Vuex.Store({
         editor: editor,
         user: user,
     },
-    strict: debug
+    strict: false
 })
 
 store.mag = Message
