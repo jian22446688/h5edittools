@@ -19,23 +19,29 @@ export const ADD_UPLOAD_IMG         = 'ADD_UPLOAD_IMG'              // 用户操
 export const IMG_CLAER_DATA         = 'IMG_CLAER_DATA'              // 清楚图片数据
 
 //添加页面元素
-export const ELE_ADD_TEXT           = 'ELE_ADD_TEXT'                // 添加页面元素 文字
-export const ELE_ADD_PIC            = 'ELE_ADD_PIC'                 // 添加页面元素 图片
-export const SET_CUR_EDITOR_ELEMENT = 'SET_CUR_EDITOR_ELEMENT'      // 设置当前编辑的h5元素
-export const ADD_PIC_ELEMENT        = 'ADD_PIC_ELEMENT'             // 添加图片元素
-export const PLAY_ANIMATE           = 'PLAY_ANIMATE'                // 播放动画
-export const STOP_ANIMATE           = 'STOP_ANIMATE'                // 播放动画
+export const SET_CUR_EDITOR_THEME   = 'SET_CUR_EDITOR_THEME'        // 设置当前编辑h5页面
 export const ADD_PAGE               = 'ADD_PAGE'                    // 添加页面
 export const UP_PAGE                = 'UP_PAGE'                     // 上移动页面
 export const DOWN_PAGE              = 'DOWN_PAGE'                   // 下移动页面
 export const COPY_PAGE              = 'COPY_PAGE'                   // 复制页面
 export const DELETE_PAGE            = 'DELETE_PAGE'                 // 删除页面
-export const CLEAR_EDIT_THEME       = 'CLEAR_EDIT_THEME'            // 清楚当前编辑的元素
+export const CLEAR_EDIT_THEME       = 'CLEAR_EDIT_THEME'            // 清楚当前编辑的主题
+export const ELE_ADD_TEXT           = 'ELE_ADD_TEXT'                // 添加页面元素 文字
+export const SET_CUR_EDITOR_ELEMENT = 'SET_CUR_EDITOR_ELEMENT'      // 设置当前编辑的h5元素
+export const ELE_COPY_ELEMENT       = 'ELE_COPY_ELEMENT'            // 复制当前编辑的h5元素
+export const DELETE_ELEMENT         = 'DELETE_ELEMENT'              // 删除元素
+export const CLEAR_CUR_ELEMENT      = 'CLEAR_CUR_ELEMENT'           // 清楚当前编辑的h5元素
+
+export const ADD_PIC_ELEMENT        = 'ADD_PIC_ELEMENT'             // 添加图片元素
+
+export const PLAY_ANIMATE           = 'PLAY_ANIMATE'                // 播放动画
+export const STOP_ANIMATE           = 'STOP_ANIMATE'                // 播放动画
+
 
 export const SET_CUR_EDITOR_PAGE    = 'SET_CUR_EDITOR_PAGE'         // 设置当前编辑的页面
 export const GET_USER_THEME_LIST    = 'GET_USER_THEME_LIST'         // 获取用户h5列表
-export const SET_CUR_EDITOR_THEME   = 'SET_CUR_EDITOR_THEME'        // 设置当前编辑h5页面
-export const DELETE_ELEMENT         = 'DELETE_ELEMENT'              // 删除元素
+
+
 export const UPDATE_THEME_DES       = 'UPDATE_THEME_DES'            // 更新主题描述
 export const UPDATE_THEME_SUCCESS   = 'UPDATE_THEME_SUCCESS'        // 更新数据成功
 export const ADD_THEME_SUCCESS      = 'ADD_THEME_SUCCESS'           // 新增页面数据成功

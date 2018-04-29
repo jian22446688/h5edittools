@@ -20,7 +20,9 @@
                           <!--height:element.height+'px',-->
                           <!--top:element.top+'px',-->
                           <!--left:element.left + 'px'}"></Picele>-->
+        <div style="position: absolute; width: 100%; height: 100%;" @click.stop="onBackroundEvent">
 
+        </div>
 
         <template v-for="elem in elems">
            <div @mousedown="selectedEle(elem)">
@@ -40,6 +42,9 @@
 
            </div>
         </template>
+
+
+
     </div>
 </template>
 
@@ -83,6 +88,9 @@
             selectedEle(ele){
                 console.log(this.editorElement)
                 this.$store.commit('SET_CUR_EDITOR_ELEMENT', ele)
+            },
+            onBackroundEvent(){
+                this.$store.commit('CLEAR_CUR_ELEMENT') // 清楚当前选择元素
             },
             mousedown (downEvent, mark) {
                 console.log(this.element)

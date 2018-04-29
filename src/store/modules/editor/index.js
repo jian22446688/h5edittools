@@ -3,6 +3,7 @@ import * as url from '../../../api/urls';
 import Theme from '@/models/Theme';
 import Page from '@/models/Page';
 import Element from '@/models/Element';
+import {login} from "../../../api/urls";
 
 const state = {
 
@@ -239,17 +240,46 @@ const mutations = {
     // todo 操作 正删改查 element 页面元素
     [types.ELE_ADD_TEXT](state, ele) {
         let el = new Element(ele)
+        el.zindex
         state.editorElement = el
         state.editorPage.elements.push(el)
+        let list = state.editorPage.elements
+        let lastIndex = state.editorPage.elements.length - 1
+        list[lastIndex].zindex = lastIndex ? list[lastIndex - 1].zindex + 1 : 1
     },
 
+    // delete_element
+    [types.DELETE_ELEMENT](state){
+        if(state.editorElement){
+            state.editorPage.elements.findIndex((val, index)=>{
+                if(val === state.editorElement){
+                    state.editorPage.elements.splice(index, 1)
+                    state.editorElement = null
+                }
+            })
+        }
+    },
 
-
+    // ele_copy_element
+    [types.ELE_COPY_ELEMENT](state){
+        if(state.editorElement){
+            let pa = {...state.editorElement};
+            pa.left = pa.left + 6
+            pa.top = pa.top + 6
+            this.commit(types.ELE_ADD_TEXT, pa)
+        }else {
+            console.log('当前元素为空')
+        }
+    },
 
     //set_cur_editor_element 设置当前编辑的元素
     [types.SET_CUR_EDITOR_ELEMENT](state, ele){
-        console.log(ele)
         state.editorElement = ele
+    },
+
+    //
+    [types.CLEAR_CUR_ELEMENT](state){
+        state.editorElement =  null
     },
 
     //get_home_theme_list
@@ -301,6 +331,7 @@ const mutations = {
     }
 
 
+    
 }
 
 /**

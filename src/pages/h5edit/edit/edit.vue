@@ -1,5 +1,5 @@
 <template>
-    <div class="editor">
+    <div class="editor" >
         <Layout class="editor-layout">
             <Header style="padding-left: 20px; height: 60px; padding-right: 20px">
                 <Menu mode="horizontal" theme="dark" active-name="1">
@@ -13,7 +13,7 @@
                         <Button type="dashed" title="文字" @click="eleTextBtn"><Icon type="compose" color="#e9eaec"  size="28"></Icon></Button>
                         <Button type="dashed" title="图片" @click="imgModal = true"><Icon type="image" color="#e9eaec"  size="28"></Icon></Button>
                         <Button type="dashed" title="形状" @click="eleShapeBtn"><Icon type="ios-videocam" color="#e9eaec"  size="28"></Icon></Button>
-                        <Button type="dashed" title="视频"><Icon type="play" color="#e9eaec"  size="28"></Icon></Button>
+                        <Button type="dashed" title="视频" @click="ontest"><Icon type="play" color="#e9eaec"  size="28"></Icon></Button>
                     </span>
                     <span class="layout-btn">
                         <Button style="display: inline-block" @click="onSaveEvent" type="primary" :loading="saveloading">
@@ -26,6 +26,7 @@
                 </Menu>
             </Header>
             <Content class="c-layout-content">
+
                 <div class="c-layout-left-page">
                     <PageAndLayer></PageAndLayer>
                 </div>
@@ -37,27 +38,12 @@
                 <div class="c-layout-right-control">
                     <ProPertyLayer></ProPertyLayer>
                 </div>
+
+                <div class="brake-click" @click="onBackroundEvent"></div>
+
             </Content>
         </Layout>
-
         <imgModal v-model="imgModal" v-on:selectimg="eleSelectimg"></imgModal>
-
-        <!-- 同上 -->
-        <input  @keyup.13="submit">
-
-        <input type="text" @keyup.13="show()">
-        <hr>
-        <input type="text" @keyup.enter="show2()">
-        <hr>
-        <input type="text" @keyup.up="show3()">
-        <hr>
-        <input type="text" @keyup.down="show4()">
-        <hr>
-        <input type="text" @keyup.left="show5()">
-        <hr>
-        <input type="text" @keyup.right="show6()">
-        <hr>
-
     </div>
 </template>
 
@@ -170,6 +156,10 @@
                 this.isPageActiv = !this.isPageActiv;
             },
 
+            onBackroundEvent(){
+                this.$store.commit('CLEAR_CUR_ELEMENT') // 清楚当前选择元素
+            },
+
             submit(){
                 console.log('"enter')
             },
@@ -214,11 +204,11 @@
             },
 
             eleShapeBtn(){
-
+                this.$store.commit('DELETE_ELEMENT')
             },
 
             ontest(){
-                console.log(this.pages);
+                this.$store.commit('ELE_COPY_ELEMENT')
             },
         },
 

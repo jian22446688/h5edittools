@@ -42,20 +42,6 @@
             </div>
         </div>
 
-        <input type="text" @keyup.13="show()">
-        <hr>
-        <input type="text" ">
-        <hr>
-        <input type="text" @keyup.up="show3()">
-        <hr>
-        <input type="text" @keyup.down="show4()">
-        <hr>
-        <input type="text" @keyup.left="show5()">
-        <hr>
-        <div type="text" @keyup.right="show6()"/>
-        <hr>
-
-
         <perview v-model="modal_preView"></perview>
     </div>
 </template>

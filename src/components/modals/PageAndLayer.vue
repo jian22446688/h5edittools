@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100%; width: 100%">
+    <div style="height: 100%; width: 100%; ">
         <Row>
             <Col style="text-align: center;" span="12">
             <div @click="onPage" class="c-left-tab-text"
@@ -140,6 +140,7 @@
             },
 
             selectPage(page) {
+                this.$store.commit('CLEAR_CUR_ELEMENT')
                 if(this.curPage === page){ return }
                 this.$store.commit('SET_CUR_EDITOR_PAGE', page)
             },

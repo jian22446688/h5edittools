@@ -27,7 +27,7 @@
                                     </Col>
                                 </Row>
                             </FormItem>
-                            <Button class="login-input" type="primary" size="large" @click="onLogin('formValue')" long>登录</Button>
+                            <Button class="login-input"  type="primary" size="large"  @click="onLogin('formValue')" long>登录</Button>
                         </Form>
                         <div style="margin-top: 16px; margin-left: 8px; margin-right: 8px">
                             <span>还没有账户?</span>
