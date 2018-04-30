@@ -10,9 +10,10 @@ require('iview/dist/styles/iview.css');
 require('./api/mock/index');
 import store from './store'
 
-import VueDND from 'awe-dnd'
+import contentmenu from 'v-contextmenu'
+import 'v-contextmenu/dist/index.css'
 axios.defaults.withCredentials = true
-Vue.use(VueDND)
+Vue.use(contentmenu)
 
 Vue.config.productionTip = false
 Vue.use(iview);

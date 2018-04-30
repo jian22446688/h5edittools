@@ -50,7 +50,7 @@
             </div>
             <div v-show="isLayerActiv" style="width: 100%;">
                 <ul>
-                    <li v-for="(page, index) in layerList" :key="index" v-dragging="{ item: page, list: layerList, group: 'page' }" @click="selectLayer(page)" >
+                    <li v-for="(page, index) in layerList" :key="index" @click="selectLayer(page)" >
                         <div class="list-layer" v-bind:class="{'list-layer-activ': page === curLayer }">
                             <i class="thumb-layer" size="16" type="ios-copy"/>
                             {{ page.activ }}
@@ -95,11 +95,6 @@
 
         },
         mounted() {
-            //层的拖动事件侦听
-            this.$dragging.$on('dragged', ({ value }) => {
-                console.log(value.item)
-                console.log(value.list)
-            })
         },
         methods: {
 

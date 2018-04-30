@@ -13,7 +13,7 @@
                         <Button type="dashed" title="文字" @click="eleTextBtn"><Icon type="compose" color="#e9eaec"  size="28"></Icon></Button>
                         <Button type="dashed" title="图片" @click="imgModal = true"><Icon type="image" color="#e9eaec"  size="28"></Icon></Button>
                         <Button type="dashed" title="形状" @click="eleShapeBtn"><Icon type="ios-videocam" color="#e9eaec"  size="28"></Icon></Button>
-                        <Button type="dashed" title="视频" @click="ontest"><Icon type="play" color="#e9eaec"  size="28"></Icon></Button>
+                        <Button type="dashed" title="视频" ><Icon type="play" color="#e9eaec"  size="28"></Icon></Button>
                     </span>
                     <span class="layout-btn">
                         <Button style="display: inline-block" @click="onSaveEvent" type="primary" :loading="saveloading">
@@ -26,7 +26,7 @@
                 </Menu>
             </Header>
             <Content class="c-layout-content">
-
+                <div class="brake-click" @click="onBackroundEvent" @contextmenu="$event.preventDefault()"></div>
                 <div class="c-layout-left-page">
                     <PageAndLayer></PageAndLayer>
                 </div>
@@ -39,7 +39,6 @@
                     <ProPertyLayer></ProPertyLayer>
                 </div>
 
-                <div class="brake-click" @click="onBackroundEvent"></div>
 
             </Content>
         </Layout>
@@ -160,28 +159,6 @@
                 this.$store.commit('CLEAR_CUR_ELEMENT') // 清楚当前选择元素
             },
 
-            submit(){
-                console.log('"enter')
-            },
-            show: function () {
-                alert('你按了回车！');
-            },
-            show2: function () {
-                alert('你按了回车！');
-            },
-            show3: function () {
-                alert('你按了上键！');
-            },
-            show4: function () {
-                alert('你按了下键！');
-            },
-            show5: function () {
-                alert('你按了左键！');
-            },
-            show6: function () {
-                alert('你按了右键！');
-            },
-
             eleSelectimg(img){
                 console.log(img)
                 let param = {
@@ -204,11 +181,7 @@
             },
 
             eleShapeBtn(){
-                this.$store.commit('DELETE_ELEMENT')
-            },
 
-            ontest(){
-                this.$store.commit('ELE_COPY_ELEMENT')
             },
         },
 

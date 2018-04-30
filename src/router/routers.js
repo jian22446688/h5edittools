@@ -29,6 +29,14 @@ const routers = [
                 },
                 component: (resolve) => require(['@/pages/h5edit/homePage/UserHome.vue'], resolve),
             },
+            {
+                path: '/about',
+                name: '关于页面',
+                meta: {
+                    title: '关于h5编辑器'
+                },
+                component: (resolve) => require(['@/pages/h5edit/homePage/about.vue'], resolve)
+            }
         ]
     },
     {

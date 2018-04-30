@@ -19,7 +19,7 @@
                             <Icon type="ios-keypad"></Icon>
                             推荐模板
                         </MenuItem>
-                        <MenuItem name="/aoute">
+                        <MenuItem name="/about">
                             <Icon type="ios-keypad"></Icon>
                             关于介绍
                         </MenuItem>

@@ -121,6 +121,7 @@
             },
             mousedown (e) {
                 console.log('鼠标按下')
+                if(e.button === 2)return
                 this.flag = true
                 this.curX = e.clientX
                 this.curY = e.clientY

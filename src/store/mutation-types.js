@@ -26,9 +26,13 @@ export const DOWN_PAGE              = 'DOWN_PAGE'                   // 下移动
 export const COPY_PAGE              = 'COPY_PAGE'                   // 复制页面
 export const DELETE_PAGE            = 'DELETE_PAGE'                 // 删除页面
 export const CLEAR_EDIT_THEME       = 'CLEAR_EDIT_THEME'            // 清楚当前编辑的主题
-export const ELE_ADD_TEXT           = 'ELE_ADD_TEXT'                // 添加页面元素 文字
 export const SET_CUR_EDITOR_ELEMENT = 'SET_CUR_EDITOR_ELEMENT'      // 设置当前编辑的h5元素
+export const ELE_ADD_TEXT           = 'ELE_ADD_TEXT'                // 添加页面元素 文字
 export const ELE_COPY_ELEMENT       = 'ELE_COPY_ELEMENT'            // 复制当前编辑的h5元素
+export const ELE_CUR_UP_TOP         = 'ELE_CUR_UP_TOP'              // 设置当前元素置顶
+export const ELE_CUR_UP_ONE         = 'ELE_CUR_UP_ONE'              // 设置当前元素上移一层
+export const ELE_CUR_DOWN_TOP       = 'ELE_CUR_DOWN_TOP'            // 设置当前元素置底
+export const ELE_CUR_DOWN_ONE       = 'ELE_CUR_DOWN_ONE'            // 设置当前元素下移一层
 export const DELETE_ELEMENT         = 'DELETE_ELEMENT'              // 删除元素
 export const CLEAR_CUR_ELEMENT      = 'CLEAR_CUR_ELEMENT'           // 清楚当前编辑的h5元素
 

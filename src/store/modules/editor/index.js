@@ -248,6 +248,18 @@ const mutations = {
         list[lastIndex].zindex = lastIndex ? list[lastIndex - 1].zindex + 1 : 1
     },
 
+    // ele_copy_element
+    [types.ELE_COPY_ELEMENT](state){
+        if(state.editorElement){
+            let pa = {...state.editorElement};
+            pa.left = pa.left + 6
+            pa.top = pa.top + 6
+            this.commit(types.ELE_ADD_TEXT, pa)
+        }else {
+            console.log('当前元素为空')
+        }
+    },
+
     // delete_element
     [types.DELETE_ELEMENT](state){
         if(state.editorElement){
@@ -260,16 +272,49 @@ const mutations = {
         }
     },
 
-    // ele_copy_element
-    [types.ELE_COPY_ELEMENT](state){
-        if(state.editorElement){
-            let pa = {...state.editorElement};
-            pa.left = pa.left + 6
-            pa.top = pa.top + 6
-            this.commit(types.ELE_ADD_TEXT, pa)
-        }else {
-            console.log('当前元素为空')
-        }
+    // set ele_cur_up_top
+    [types.ELE_CUR_UP_TOP](state){
+        let arr = state.editorPage.elements
+        let objindex = null
+        arr.findIndex((val, index) => {
+            if(val === state.editorElement) objindex = index
+        })
+        let y = arr.length -1
+        arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
+    },
+
+    // set ele_cur_up_one
+    [types.ELE_CUR_UP_ONE](state){
+        let arr = state.editorPage.elements
+        let objindex = null
+        arr.findIndex((val, index) => {
+            if(val === state.editorElement) objindex = index
+        })
+        let y = objindex + 1
+        arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
+    },
+
+    // set ele_cur_down_top
+    [types.ELE_CUR_DOWN_TOP](state){
+        let arr = state.editorPage.elements
+        let objindex = null
+        arr.findIndex((val, index) => {
+            if(val === state.editorElement) objindex = index
+        })
+        let y = 0
+        arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
+    },
+
+    // set ele_cur_down_one
+    [types.ELE_CUR_DOWN_ONE](state){
+        let arr = state.editorPage.elements
+        let objindex = null
+        arr.findIndex((val, index) => {
+            if(val === state.editorElement) objindex = index
+        })
+        if(objindex === 0) return
+        let y = objindex - 1
+        arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
     },
 
     //set_cur_editor_element 设置当前编辑的元素
@@ -315,7 +360,6 @@ const mutations = {
     [types.DEL_DELTE_IMG](state, name){
         state[name].count--
         state[name].data = []
-        console.log("ddddd")
     },
 
     // add_upload_img
@@ -331,7 +375,7 @@ const mutations = {
     }
 
 
-    
+
 }
 
 /**
