@@ -3,7 +3,7 @@ export default class Page {
         this.elements = page.elements || []
         this.bg = page.bg || {
             img: '',
-            color: ''
+            color: 'rgb(255, 255, 255)'
         }
     }
 }

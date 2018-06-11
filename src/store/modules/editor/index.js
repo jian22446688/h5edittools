@@ -51,6 +51,11 @@ const actions = {
         }
     },
 
+    // 用户
+    useTheme({}, data){
+        url.useTheme(data._id).then((res) => {})
+    },
+
     // 刷新编辑页面的 获取单个页面
     pageFindOne({ commit }, itemid){
         if(itemid){
@@ -58,9 +63,9 @@ const actions = {
                 url.pageFindnoe(itemid).then(res => {
                     if(res.code === 0){
                         commit(types.SET_CUR_EDITOR_THEME, res.body);
-                        reject()
-                    }else {
                         resolve()
+                    }else {
+                        reject()
                     }
                 })
             })
@@ -146,10 +151,6 @@ const actions = {
         })
     }
 
-
-
-
-
 }
 
 /**
@@ -164,6 +165,18 @@ const mutations = {
     // 记得默认图片一定是 upload/all/img_default.png 已经在服务器上面了
     [types.CREATE_THEME](state, data){
         let newh5 = new Theme({ title: data.title, description: data.des, themebg: 'upload/all/img_default.png'});
+        state.themeList.push(newh5);
+        this.commit(types.SET_CUR_EDITOR_THEME, newh5);
+    },
+
+    // use_create_theme 用户使用模板
+    [types.USE_CREATE_THEME](state, data){
+        let newh5 = new Theme()
+        newh5.title = data.title + "_模板"
+        newh5.bgMusic = data.bgMusic
+        newh5.themebg = data.themebg
+        newh5.type = data.type
+        newh5.pages = data.pages
         state.themeList.push(newh5);
         this.commit(types.SET_CUR_EDITOR_THEME, newh5);
     },
@@ -203,7 +216,8 @@ const mutations = {
     [types.COPY_PAGE](state, data){
         state.editorTheme.pages.findIndex((value, index) => {
             if(value === data.data) {
-                let pa = {...data.data};
+                // let { ...pa} = data.data;
+                let pa = JSON.parse(JSON.stringify(data.data))
                 state.editorTheme.pages.splice(index + 1, 0, pa);
                 data.this.$nextTick(() => {
                     this.commit(types.SET_CUR_EDITOR_PAGE, pa)
@@ -240,7 +254,6 @@ const mutations = {
     // todo 操作 正删改查 element 页面元素
     [types.ELE_ADD_TEXT](state, ele) {
         let el = new Element(ele)
-        el.zindex
         state.editorElement = el
         state.editorPage.elements.push(el)
         let list = state.editorPage.elements
@@ -281,6 +294,7 @@ const mutations = {
         })
         let y = arr.length -1
         arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
+        for (let i = 0; i < arr.length ; i++) arr[i].zindex = i + 1
     },
 
     // set ele_cur_up_one
@@ -292,6 +306,7 @@ const mutations = {
         })
         let y = objindex + 1
         arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
+        for (let i = 0; i < arr.length ; i++) arr[i].zindex = i + 1
     },
 
     // set ele_cur_down_top
@@ -303,6 +318,7 @@ const mutations = {
         })
         let y = 0
         arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
+        for (let i = 0; i < arr.length ; i++) arr[i].zindex = i + 1
     },
 
     // set ele_cur_down_one
@@ -315,6 +331,7 @@ const mutations = {
         if(objindex === 0) return
         let y = objindex - 1
         arr.splice(objindex, 1, ...arr.splice(y, 1, arr[objindex]))
+        for (let i = 0; i < arr.length ; i++) arr[i].zindex = i + 1
     },
 
     //set_cur_editor_element 设置当前编辑的元素
@@ -372,7 +389,53 @@ const mutations = {
     [types.IMG_CLAER_DATA](state, name){
         state[name].count = 0
         state[name].data = []
-    }
+    },
+
+    // 播放动画
+    [types.PLAY_ANIMATE](state){
+        let elements = state.editorPage.elements
+        let editingElement = state.editorElement
+        if (editingElement && editingElement.animatedName) {
+            // 如存在有动画的选择元素
+            editingElement.playing = true
+        } else if (!editingElement) {
+            // 不存在被选择的元素
+            elements.forEach(v => {
+                v.playing = true
+            })
+        }
+
+        let target = state.editorElement || state.editorPage.elements || null
+        let time = 0
+        if (target instanceof Array) {
+            target.forEach(v => {
+                time = v['animatedName'] && (v['duration'] + v['delay']) > time ? (v['duration'] + v['delay']) : time
+            })
+        } else if (target instanceof Object) {
+            time = (target['duration'] + target['delay'])
+        }
+        setTimeout(() => {
+            this.commit(types.STOP_ANIMATE, target)
+        }, time * 1000)
+    },
+
+    // 停止动画
+    [types.STOP_ANIMATE](state, data){
+        if (data instanceof Array) {
+            // 该页元素
+            data.forEach(v => {
+                v['playing'] = false
+            })
+        } else if (data instanceof Object) {
+            // 单个元素
+            data['playing'] = false
+        } else {
+            // 不传参情况
+            state['editorPage']['elements'].forEach(v => {
+                v['playing'] = false
+            })
+        }
+    },
 
 
 

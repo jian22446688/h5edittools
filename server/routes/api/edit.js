@@ -8,7 +8,8 @@ const uuidv1 = require('uuid/v1')
 const imageSize = require('image-size')
 const Theme = require('../../models/edit/theme')
 const File = require('../../models/edit/file')
-
+const template = require('art-template')
+var zipper = require('zip-local');
 /**
  * 获取一个页面的数据 需要验证
  * @parma { itemid }
@@ -95,7 +96,7 @@ router.post('/pages', auth.userLoginAuth, function (req, res) {
  * 保存更改的H5页面 需要验证
  * @parma { itemid  h5 body: theme.modal data }
  */
-router.put('/pages/:itemid',auth.userLoginAuth, function (req, res) {
+router.put('/pages/:itemid', auth.userLoginAuth, function (req, res) {
     let id = req.params.itemid
     req.body.updated_time = new Date();
     Theme.findOneAndUpdate({ _id: id, userId: req.session.userinfo._id}, req.body,
@@ -141,6 +142,122 @@ router.delete('/pages/:itemid', function (req, res) {
 
 })
 
+/**
+ * 预览查看 H5页面
+ */
+router.get('/preview/:themeid', function (req, res) {
+    let id = req.params.themeid
+    let par = {_id:id, status: 1}
+    if(req.session.userinfo){
+        par = {_id:id, userId: req.session.userinfo._id}
+    }
+    Theme.findOne(par).then((data) =>{
+        if(data){
+            data.preview = true
+            res.render('demo/index.art', data)
+        }else {
+            res.status(404);
+            res.data.code = -1
+            res.data.message = '获取数据失败，没有查找到数据'
+            res.json(res.data)
+        }
+    })
+})
+
+/**
+ * 用户使用模板 添加模板使用数量
+ */
+router.get('/usetheme/:themeid', auth.userLoginAuth, function (req, res) {
+    let id = req.params.themeid
+    Theme.findOne({ _id: id, userId: req.session.userinfo._id}).then(data => {
+        if(data){
+            Theme.update({_id: id}, {use_count: data.use_count + 1}).then((doc) => {
+                if(doc){
+                    res.data.message = '更新成功'
+                    res.json(res.data)
+                }else {
+                    res.data.code = -1
+                    res.data.message = '更新失败'
+                    res.json(res.data)
+                }
+            })
+        }else {
+            res.data.code = -1
+            res.data.message = '更新失败'
+            res.json(res.data)
+        }
+    })
+})
+
+
+router.get('/thdownload/:themeid', auth.userLoginAuth, function (req, res) {
+    let id = req.params.themeid
+    let par = {}
+    if(req.session.userinfo){
+        par = {_id:id, userId: req.session.userinfo._id}
+    }
+    Theme.findOne(par).then((data) =>{
+        if(data){
+            let updir = process.cwd() + '/server/public/'
+            let imgList = new Set([])
+            data.pages.map(item => {
+                if(item.bg.img){
+                    imgList.add(item.bg.img)
+                    let is = item.bg.img.split('/')
+                    item.bg.img ='image/' + is[is.length-1]
+                }
+                item.elements.map(src => {
+                    if(src.imgSrc) {
+                        imgList.add(src.imgSrc)
+                        let is = src.imgSrc.split('/')
+                        src.imgSrc = 'image/' + is[is.length-1]
+                    }
+                })
+            })
+            let svaedir = process.cwd() + '/upTmpe/'
+            let html = template( process.cwd() + '/server/views/demo/index.art', data)
+            let spath =  svaedir + data.title + '_' + new Date().getTime()
+            let htmlname = svaedir + 'demo/index.html'
+            //同步方法
+            try {
+                fs.writeFileSync(htmlname, html)
+            }catch (e) {
+                res.data.code = -1
+                res.data.message = '文件写入失败'
+                res.json(res.data)
+            }
+            let cpimg = svaedir + '/demo/image/'
+            createFolder(cpimg)
+            for (let item of imgList.keys()) {
+                console.log(item);
+                let imgn = item.split('/')
+                copyfile(updir + item, cpimg + imgn[imgn.length - 1])
+            }
+            zipper.zip(svaedir + 'demo', function(error, zipped) {
+                if(!error) {
+                    // or save the zipped file to disk
+                    let zipfile = spath + ".zip"
+                    zipped.save(zipfile, function(error) {
+                        if(!error) {
+                            try {
+                                rmdir(cpimg);
+                            } catch (e) {
+                                console.log(e.message);
+                            }
+                            res.download(zipfile)
+                        }
+                    });
+                }
+            });
+        }else {
+            res.data.code = -1
+            res.data.message = '获取数据失败，没有查找到数据'
+            res.json(res.data)
+        }
+    })
+})
+
+
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 /********************************************************************************************************************/
@@ -163,6 +280,88 @@ var createFolder = function(folder){
         // 文件夹不存在，以同步的方式创建文件目录。
         fs.mkdirSync(folder);
     }
+};
+
+/**
+ * 复制文件
+ * @param src
+ * @param dir
+ */
+function copyfile(src, dir) {
+    fs.writeFileSync(dir, fs.readFileSync(src));
+}
+
+var rmdir = function (dirPath) {
+    var files = fs.readdirSync(dirPath);
+    if (files.length > 0)
+        for (var i = 0; i < files.length; i++) {
+            var filePath = path.join(dirPath, files[i]);
+            if (fs.statSync(filePath).isFile()) {
+                fs.unlinkSync(filePath);
+            } else {
+                rmdir(filePath);
+            }
+        }
+    fs.rmdirSync(dirPath);
+};
+
+/*
+05
+ * 复制目录中的所有文件包括子目录
+06
+ * @param{ String } 需要复制的目录
+07
+ * @param{ String } 复制到指定的目录
+08
+ */
+var copy = function( src, dst ){
+    // 读取目录中的所有文件/目录
+    fs.readdir( src, function( err, paths ){
+        if( err ){
+            throw err;
+        }
+
+        paths.forEach(function( path ){
+            var _src = src + '/' + path,
+                _dst = dst + '/' + path,
+                readable, writable;
+
+            fs.stat( _src, function( err, st ){
+                if( err ){
+                    throw err;
+                }
+
+                // 判断是否为文件
+                if( st.isFile() ){
+                    // 创建读取流
+                    readable = fs.createReadStream( _src );
+                    // 创建写入流
+                    writable = fs.createWriteStream( _dst );
+                    // 通过管道来传输流
+                    readable.pipe( writable );
+                }
+                // 如果是目录则递归调用自身
+                else if( st.isDirectory() ){
+                    exists( _src, _dst, copy );
+                }
+            });
+        });
+    });
+};
+// 在复制目录前需要判断该目录是否存在，不存在需要先创建目录
+var exists = function( src, dst, callback ){
+    fs.exists( dst, function( exists ){
+        // 已存在
+        if( exists ){
+            callback( src, dst );
+        }
+        // 不存在
+        else{
+            fs.mkdir( dst, function(){
+                callback( src, dst );
+            });
+        }
+    });
 };
 
 /**

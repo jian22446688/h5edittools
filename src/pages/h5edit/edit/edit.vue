@@ -12,7 +12,7 @@
                     <span class="c-layout-componetns-icon">
                         <Button type="dashed" title="文字" @click="eleTextBtn"><Icon type="compose" color="#e9eaec"  size="28"></Icon></Button>
                         <Button type="dashed" title="图片" @click="imgModal = true"><Icon type="image" color="#e9eaec"  size="28"></Icon></Button>
-                        <Button type="dashed" title="形状" @click="eleShapeBtn"><Icon type="ios-videocam" color="#e9eaec"  size="28"></Icon></Button>
+                        <Button type="dashed" title="形状" @click="eleShapeBtn"><Icon type="star" color="#e9eaec"  size="28"></Icon></Button>
                         <Button type="dashed" title="视频" ><Icon type="play" color="#e9eaec"  size="28"></Icon></Button>
                     </span>
                     <span class="layout-btn">
@@ -20,8 +20,7 @@
                                 <span v-if="!saveloading">保存</span>
                                 <span v-else>保存中...</span>
                         </Button>
-                        <Button style="display: inline-block" @click="onSettingEvent" type="primary">设置</Button>
-                        <Button style="display: inline-block" @click="onPreviewEvent" type="primary">预览</Button>
+                        <Button style="display: inline-block" @click="onSettingEvent" type="primary">设置预览</Button>
                     </span>
                 </Menu>
             </Header>
@@ -39,10 +38,10 @@
                     <ProPertyLayer></ProPertyLayer>
                 </div>
 
-
             </Content>
         </Layout>
         <imgModal v-model="imgModal" v-on:selectimg="eleSelectimg"></imgModal>
+        <Perview v-model="modal_preView" :theme="h5item"></Perview>
     </div>
 </template>
 
@@ -51,6 +50,8 @@
     import ProPertyLayer from  '@/components/modals/ProPertyLayer.vue'
     import EditPanelLayer from '@/components/modals/EditPanel.vue'
     import imgModal from '@/components/modals/ImgModals.vue'
+    import Perview from '@/components/modals/PreviewSetModal'
+    import PerviewPage from '@/components/modals/PreviewPage'
     export default {
         name: "edit",
 
@@ -58,7 +59,9 @@
             PageAndLayer: PageAndLayer,
             ProPertyLayer: ProPertyLayer,
             EditPanelLayer: EditPanelLayer,
-            imgModal: imgModal
+            imgModal: imgModal,
+            Perview,
+            PerviewPage
         },
 
         data(){
@@ -69,7 +72,12 @@
                 canvasHeight: 504,
                 imgModal: false,
                 saveloading: false,
-                itemId: null
+                itemId: null,
+                modal_preView: false,
+                h5item: {
+                    title: 'title',
+                    description: 'des'
+                },
             }
         },
 
@@ -77,9 +85,10 @@
             this.itemId = this.$route.query.itemId
             if(this.itemId){
                 this.$store.dispatch('pageFindOne', this.itemId).then(() => {
+                }).catch(err => {
                     this.$Message.error('获取编辑数据')
                     this.$router.go(-1)
-                }).catch(err => {})
+                })
             }
         },
 
@@ -98,7 +107,9 @@
                 return ele || {}
             },
 
-
+            editorTheme(){
+                return this.$store.state.editor.editorTheme
+            },
         },
 
         mounted() {
@@ -113,7 +124,6 @@
             //     var warning = "谢谢光临";
             //     alert(warning);
             // }
-
         },
         methods: {
 
@@ -135,14 +145,10 @@
                 })
             },
 
-            //设置
+            //设置和预览
             onSettingEvent(){
-
-            },
-
-            // 预览
-            onPreviewEvent(){
-
+                this.modal_preView = true
+                this.h5item = this.editorTheme
             },
 
             onlayer(){
@@ -160,7 +166,6 @@
             },
 
             eleSelectimg(img){
-                console.log(img)
                 let param = {
                     type: 'pic',
                     width: img.width,
@@ -175,13 +180,14 @@
                     type: 'text',
                     text: '请输入文本',
                     width: this.canvasWidth,
+                    height: 42,
                     lineHeight: 1.5,
                 }
                 this.$store.commit('ELE_ADD_TEXT', param)
             },
 
             eleShapeBtn(){
-
+                this.$Message.warning('正在努力搭建')
             },
         },
 

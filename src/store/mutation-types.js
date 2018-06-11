@@ -8,6 +8,7 @@ export const USER_GET_USERINFO      = 'getuserinfo'
 
 //edit
 export const CREATE_THEME           = 'CREATE_THEME'                // 创建主题
+export const USE_CREATE_THEME       = 'USE_CREATE_THEME'            // 使用主题
 export const GET_USER_LIST          = 'getUser_Theme_List'          // 获取用户创建的h5
 export const GET_HOME_THEME_LIST    = 'getHome_Theme_List'          // 获取首页H5列表
 
@@ -35,11 +36,11 @@ export const ELE_CUR_DOWN_TOP       = 'ELE_CUR_DOWN_TOP'            // 设置当
 export const ELE_CUR_DOWN_ONE       = 'ELE_CUR_DOWN_ONE'            // 设置当前元素下移一层
 export const DELETE_ELEMENT         = 'DELETE_ELEMENT'              // 删除元素
 export const CLEAR_CUR_ELEMENT      = 'CLEAR_CUR_ELEMENT'           // 清楚当前编辑的h5元素
-
+export const PLAY_ANIMATE           = 'PLAY_ANIMATE'                // 播放动画
+export const STOP_ANIMATE           = 'STOP_ANIMATE'                // 停止动画
 export const ADD_PIC_ELEMENT        = 'ADD_PIC_ELEMENT'             // 添加图片元素
 
-export const PLAY_ANIMATE           = 'PLAY_ANIMATE'                // 播放动画
-export const STOP_ANIMATE           = 'STOP_ANIMATE'                // 播放动画
+
 
 
 export const SET_CUR_EDITOR_PAGE    = 'SET_CUR_EDITOR_PAGE'         // 设置当前编辑的页面

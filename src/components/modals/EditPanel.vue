@@ -1,15 +1,13 @@
 <template >
     <div class="container">
-        <div style="position: absolute; width: 100%; height: 100%;" @click.stop="onBackroundEvent"></div>
 
-        <div class="page-bg">
+        <div class="page-bg" @click="onBackroundEvent">
 
         </div>
 
         <!--<div @mousedown.stop="mousedown($event, 'nw')">-->
             <!--<img src="@/assets/logo.png" alt="">-->
         <!--</div>-->
-
 
         <!--<Picele :element="element"-->
                 <!--:showOperate="true"-->
@@ -30,15 +28,33 @@
 
         <template v-for="elem in elems">
             <div @mousedown="selectedEle($event, elem)"  @contextmenu="showMenu($event, elem)">
-                <Picele
+                <PicElement
                     v-if="elem.type === 'pic'"
                     :element="elem"
-                    :style="{ width:elem.width+'px',
-                      height:elem.height+'px',
-                      top:elem.top+'px',
-                      left:elem.left + 'px'}"
+                    :style="{
+                    zIndex: elem.zindex,
+                    width:elem.width+'px',
+                    height:elem.height+'px',
+                    top:elem.top+'px',
+                    left:elem.left + 'px',
+                    transform: 'rotate('+elem.transform+'deg)',
+
+                }"
                     :showOperate="editorElement == elem">
-                </Picele>
+                </PicElement>
+
+                <TextElement v-if="elem.type === 'text'"
+                             :element="elem"
+                             :style="{
+                             zIndex: elem.zindex,
+                             top: elem.top+'px',
+                             left: elem.left+'px',
+                             width: elem.width + 'px',
+                             height: elem.height + 'px',
+                             transform: 'rotate(' + elem.transform + 'deg' + ')'
+                             }">
+
+                </TextElement>
             </div>
         </template>
     </div>
@@ -46,17 +62,22 @@
 
 <script>
 
-    import Picele from '@/components/module/PicElement.vue'
+    import PicElement from '@/components/module/PicElement.vue'
+    import TextElement from '@/components/module/TextElement.vue'
 
     import * as config from '@/api/config'
 
     export default {
         name: "edit-panel",
-        components: { Picele },
+        components: { PicElement, TextElement },
         props: {
             elems: { type: Array },
             editorElement: { type: Object },
         },
+
+        computed: {
+        },
+
         data(){
             return {
                 caryHost: config.caryHost,
@@ -116,7 +137,6 @@
 
         },
         methods: {
-
             showMenu (event, ele) {
                 event.preventDefault()
                 this.$refs.contextmenu.show({top: event.clientY, left: event.clientX})

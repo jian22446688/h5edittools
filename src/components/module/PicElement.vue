@@ -1,6 +1,8 @@
 <template>
     <div class="wrap"  @mousedown="mousedown" @mouseup="mouseup">
-        <img  @dragstart="$event.preventDefault()" :src="host+element.imgSrc" style="width:100%; height:100%;">
+        <div class="img-box-edit" :class="element['playing'] && 'animated ' + this.element['animatedName']" :style="styleBoder">
+            <img @dragstart="$event.preventDefault()" :src="host+element.imgSrc" style="width:100%; height:100%;">
+        </div>
         <Operate v-show="showOperate"
                  @mousedown.native.stop="scaleMousedown"
                  @mouseup.native.stop="scaleMouseup"
@@ -27,15 +29,30 @@
             return {
                 left: 0,
                 top: 0,
-                widht: 0,
+                width: 0,
                 height: 0,
                 curX: 0,
                 curY: 0,
                 flag: false,
                 scaleFlag: false,
-                dirrection: '',
-                host: config.caryHost,
-                imgsrc: '../../assets/logo.png'
+                direction: '',
+                host: config.caryHost + '/',
+            }
+        },
+        computed: {
+            styleBoder () {
+                return {
+                    backgroundColor: this.element.bgColor,
+                    opacity: this.element.opacity/100,
+                    borderStyle: this.element.borderStyle,
+                    borderColor: this.element.borderColor,
+                    borderWidth: this.element.borderWidth + 'px',
+                    borderRadius: this.element.borderRadius + 'px',
+                    boxShadow: `${this.element.boxShadow_h}px ${this.element.boxShadow_v}px ${this.element.boxShadow_sp}px ${this.element.boxShadow_color}`,
+                    animationIterationCount: this.element.loop ? 'infinite' : 'initial',
+                    animationDuration:       this.element.duration + 's',
+                    animationDelay:          this.element.delay + 's',
+                }
             }
         },
         created() {
@@ -43,6 +60,9 @@
         },
         mounted() {
 
+            let a = `${this.element.boxShadow_h}px ${this.element.boxShadow_v}px ${this.element.boxShadow_sp}px ${this.element.boxShadow_color}`
+
+            console.log(a);
         },
         methods: {
             move(){
@@ -74,53 +94,68 @@
                         switch (this.direction) {
                             // 左边
                             case 'w':
-                                this.element.width = parseInt(this.width) - disX
-                                this.element.left = parseInt(this.left) + disX
+                                if((parseInt(this.width) - disX) >= 1) {
+                                    this.element.width = parseInt(this.width) - disX
+                                    this.element.left = parseInt(this.left) + disX
+                                }
                                 break
                             // 右边
                             case 'e':
-                                this.element.width = parseInt(this.width) + disX
+                                if((parseInt(this.width) + disX) >= 1) {
+                                    this.element.width = parseInt(this.width) + disX
+                                }
                                 break
                             // 上边
                             case 'n':
-                                this.element.height = parseInt(this.height) - disY
-                                this.element.top = parseInt(this.top) + disY
+                                if((parseInt(this.height) - disY) >= 1){
+                                    this.element.height = parseInt(this.height) - disY
+                                    this.element.top = parseInt(this.top) + disY
+                                }
                                 break
                             // 下边
                             case 's':
-                                this.element.height = parseInt(this.height) + disY
+                                if((parseInt(this.height) + disY) >= 1){
+                                    this.element.height = parseInt(this.height) + disY
+                                }
                                 break
                             // 左上
                             case 'nw':
-                                this.element.width = parseInt(this.width) - disX
-                                this.element.left = parseInt(this.left) + disX
-                                this.element.height = parseInt(this.height) - disY
-                                this.element.top = parseInt(this.top) + disY
+                                if((parseInt(this.height) - disY) >= 3 && (parseInt(this.width) - disX) >= 3){
+                                    this.element.width = parseInt(this.width) - disX
+                                    this.element.left = parseInt(this.left) + disX
+                                    this.element.height = parseInt(this.height) - disY
+                                    this.element.top = parseInt(this.top) + disY
+                                }
                                 break
                             // 左下
                             case 'sw':
-                                this.element.width = parseInt(this.width) - disX
-                                this.element.left = parseInt(this.left) + disX
-                                this.element.height = parseInt(this.height) + disY
+                                if((parseInt(this.height) + disY) >= 3 && (parseInt(this.width) - disX) >= 3){
+                                    this.element.width = parseInt(this.width) - disX
+                                    this.element.left = parseInt(this.left) + disX
+                                    this.element.height = parseInt(this.height) + disY
+                                }
                                 break
                             // 右上
                             case 'ne':
-                                this.element.height = parseInt(this.height) - disY
-                                this.element.top = parseInt(this.top) + disY
-                                this.element.width = parseInt(this.width) + disX
+                                if((parseInt(this.height) - disY) >= 3 && (parseInt(this.width) + disX) >= 3){
+                                    this.element.height = parseInt(this.height) - disY
+                                    this.element.top = parseInt(this.top) + disY
+                                    this.element.width = parseInt(this.width) + disX
+                                }
                                 break
                             // 右下
                             case 'se':
-                                this.element.height = parseInt(this.height) + disY
-                                this.element.width = parseInt(this.width) + disX
+                                if((parseInt(this.height) + disY) >= 3){
+                                    this.element.height = parseInt(this.height) + disY
+                                    this.element.width = parseInt(this.width) + disX
+                                }
                                 break
                         }
-                        console.log(this.element.width)
                     }
                 }
             },
+
             mousedown (e) {
-                console.log('鼠标按下')
                 if(e.button === 2)return
                 this.flag = true
                 this.curX = e.clientX
@@ -129,10 +164,12 @@
                 this.left = this.element.left
                 this.move()
             },
+
             mouseup (e) {
                 this.flag = false
                 this.scaleFlag = false
             },
+
             scaleMousedown (e) {
                 this.scaleFlag = true
                 this.curX = e.clientX
@@ -148,11 +185,6 @@
             scaleMouseup (e) {
                 this.scaleFlag = false
             },
-            dragstart (event) {
-                console.log('dragstart')
-                event.preventDefault()
-
-            }
         }
     }
 </script>
@@ -162,8 +194,15 @@
         position: absolute;
         cursor: move;
     }
-    .wrap img {
+    .img-box-edit {
+        position: absolute;
+        width:100%;
+        height:100%;
+        overflow: hidden;
+    }
+    .img-box-edit img {
         position: absolute;
         user-select: none;
     }
 </style>
+

@@ -35,6 +35,10 @@ export const saveTheme = (theme) => {
     return http.post('/api/edit/pages', theme)
 }
 
+export const useTheme = (themeid) => {
+    return http.get('/api/edit/usetheme/'+themeid)
+}
+
 export const updateTheme = (themeid) => {
     return http.put('/api/edit/pages/' + themeid._id, themeid)
 }
@@ -71,6 +75,7 @@ export const getPublicUpimg = (param) => {
 export const deleteImg = (imgid) => {
     return http.del('/api/edit/files/upload', imgid)
 }
+
 
 
 

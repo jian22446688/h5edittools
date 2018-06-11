@@ -13,7 +13,7 @@ module.exports = {
 
 
         // Various Dev Server settings
-        host: 'localhost', // can be overwritten by process.env.HOST
+        host: '127.0.0.1', // can be overwritten by process.env.HOST
         port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
         autoOpenBrowser: false, //是否自动启动浏览器
         errorOverlay: true,
@@ -51,7 +51,7 @@ module.exports = {
         // Paths
         assetsRoot: path.resolve(__dirname, '../dist'),
         assetsSubDirectory: 'static',
-        assetsPublicPath: './', // 为了在 本地测试 能加载到资源文件 加点. ;
+        assetsPublicPath: '/', // 为了在 本地测试 能加载到资源文件 加点. ;
 
         /**
          * Source Maps

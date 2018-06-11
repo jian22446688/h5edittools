@@ -1,4 +1,5 @@
 import axios from 'axios'
+import * as config from '../api/config'
 const chttp = {}
 axios.defaults.withCredentials = true
 // axios.interceptors.response.use(data =>{
@@ -9,7 +10,7 @@ axios.defaults.withCredentials = true
 
 var BACKEND_DOMAIN = 'http://localhost:3000'
 if (process.env.NODE_ENV === 'production') {
-    BACKEND_DOMAIN = 'http://h5.pyge.top'
+    BACKEND_DOMAIN = config.caryHost
 } else if (process.env.NODE_ENV === 'development') {
     BACKEND_DOMAIN = ''
 }

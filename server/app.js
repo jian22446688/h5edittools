@@ -10,6 +10,7 @@ var cookieSession = require('cookie-session')
 //日志中间件
 var logger = require('morgan');
 
+var artTemplate = require('express-art-template')
 
 //数据路由
 var indexRouter = require('./routes/index');
@@ -46,6 +47,15 @@ app.all('*', function (req, res, next) {
         next();
     }
 });
+
+app.engine('art', require('express-art-template'));
+app.set('view options', {
+    debug: process.env.NODE_ENV !== 'production'
+});
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'art');
+
+
 
 app.use(cookieParser());
 app.use(logger('dev'));

@@ -4,10 +4,12 @@ var auth = require('../verify/index');
 var router = express.Router();
 var User = require('../../models/user/user')
 
+var crypto = require('../../utils/crypto')
+
 /**
  * 获取用户信息 用于验证用户是否登录
  */
-router.get('/userinfo',  function (req, res) {
+router.get('/userinfo', function (req, res) {
     if(req.session.userinfo){
         res.data.message = '获取用户信息成功'
         res.data.body = req.session.userinfo
@@ -23,12 +25,11 @@ router.get('/userinfo',  function (req, res) {
  * 测试  用于设置一个用户数据到 session中
  */
 router.get('/usertest', function (req, res) {
-    User.findOne({name: 'aaa'}).then((err)=>{
-        console.log(err)
-        if(err){
-            req.session.userinfo = err
+    User.findOne({name: 'aaa'}).then((data)=>{
+        if(data){
+            req.session.userinfo = data
             res.data.message = '设置用户信息成功'
-            res.data.body = err
+            res.data.body = data
             res.json(res.data)
         }
     })
@@ -108,14 +109,20 @@ router.post('/login', function (req, res) {
         res.data.message = '验证密错误';
         res.json(res.data);
     } else {
-        User.findOne({ name: req.body.name }).then((err) =>{
-            if(err){
-                console.log(err);
-                if(req.body.name == err.name && req.body.password == err.password){
-                    req.session.userinfo = err
+        User.findOne({ name: req.body.name }).then((data) =>{
+            if(data){
+                if(req.body.name === data.name && req.body.password === data.password){
+                    let user = {
+                        created_time:   data.created_time,
+                        updated_time:   data.updated_time,
+                        _id:            data._id,
+                        name:           data.name,
+                        email:          data.email,
+                    }
+                    req.session.userinfo = user
                     res.data.message = "登录成功"
-                    res.data.body = err;
-                    console.log(" 欢迎：" +  err.name + ' 登录成功')
+                    res.data.body = user;
+                    console.log(" 欢迎：" +  user.name + ' 登录成功')
                 }else {
                     res.data.code = -1
                     res.data.message = "用户名密码错误"
@@ -128,6 +135,14 @@ router.post('/login', function (req, res) {
             }
         })
     }
+})
+
+router.get('/test', function (req, res) {
+
+    let str = 'aaa'
+    let pass = 'passowrd'
+    res.data.body = crypto.getMd5(str);
+    res.json(res.data)
 })
 
 /**

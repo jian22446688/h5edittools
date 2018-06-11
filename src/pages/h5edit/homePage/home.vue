@@ -2,11 +2,38 @@
     @import "./home.less";
 </style>
 <template>
-    <div class="my-themes" @keyup.enter="show2()">
+    <div class="my-themes">
+        <Carousel v-model="value3" autoplay :autoplay-speed="autoplaySpeed">
+            <CarouselItem>
+                <div class="demo-carousel">
+                    <img src="https://file2.rrxh5.cc/g1/2017/08/05/1501894640649.jpg" width="100%" height="100%" alt="">
+                </div>
+            </CarouselItem>
+            <CarouselItem>
+                <div class="demo-carousel">
+                    <img src="https://file2.rrxh5.cc/g1/2018/02/26/1519636883404.jpg" width="100%" height="100%" alt="">
+                </div>
+            </CarouselItem>
+            <CarouselItem>
+                <div class="demo-carousel">
+                    <img src="https://file2.rrxh5.cc/g1/2017/11/25/1511574863776.png" width="100%" height="100%" alt="">
+                </div>
+            </CarouselItem>
+            <CarouselItem>
+                <div class="demo-carousel">
+                    <img src="https://file2.rrxh5.cc/g1/2017/11/14/1510637878770.png" width="100%" height="100%" alt="">
+                </div>
+            </CarouselItem>
+            <CarouselItem>
+                <div class="demo-carousel">
+                    <img src="https://file2.rrxh5.cc/g1/2018/04/16/1523867601792.jpg" width="100%" height="100%" alt="">
+                </div>
+            </CarouselItem>
+        </Carousel>
         <div class="container">
             <Card dis-hover style="margin-bottom: 16px;">
                 <div class="c-menu-bg">
-                    <Button @click="ontest" type="primary" shape="circle">时尚</Button>
+                    <Button @dblclick="ontest" type="primary" shape="circle">时尚</Button>
                     <Button @click="ontest1" type="primary" shape="circle">海报</Button>
                     <Button @click="ontest2" type="primary" shape="circle">简历</Button>
                     <Button @click="ontest3" type="primary" shape="circle">测试</Button>
@@ -28,12 +55,16 @@
                                                 <i style="cursor: pointer;" @click="deleteTheme(item.userId)"><Icon size="22" type="trash-a"></Icon></i>
                                             </Tooltip>
                                         </div>
-                                        <Button class="preview" size="large" @click="showPreView(item.userId)" icon="play">预览</Button>
+                                        <Button class="preview" size="large" @click="showPreView(item)" icon="play">预览</Button>
                                     </div>
                                 </div>
                                 <div class="footer">
                                     <div class="title">{{ item.title }}</div>
-                                    <div class="content">{{ item.description }}</div>
+                                    <div style="height: 32px;">
+                                        <span style="padding: 2px; background-color: #19be6b; color: #fff">模板</span>
+
+                                    </div>
+                                    <div class="content">{{item.use_count}} 次制作</div>
                                 </div>
                             </Card>
                         </template>
@@ -42,12 +73,12 @@
             </div>
         </div>
 
-        <perview v-model="modal_preView"></perview>
+        <perview v-model="modal_preView" :theme="h5item"></perview>
     </div>
 </template>
 
 <script>
-    import Perview from '@/components/modals/previewModal'
+    import Perview from '@/components/modals/PreviewSetModal'
     import Qrcode from '@xkeshi/vue-qrcode'
     import * as config from '@/api/config'
 
@@ -59,9 +90,15 @@
         },
         data () {
             return {
+                value3: 0,
+                autoplaySpeed: 5000,
                 qrcodeAdderss: 'http://xxxxxxxxxxxxxxx',
                 modal_preView: false,
-                basehost: config.caryHost
+                h5item: {
+                    title: 'title',
+                    description: 'des'
+                },
+                basehost: config.caryHost + '/'
             };
         },
         computed: {
@@ -79,41 +116,20 @@
             },
             deleteTheme(item){
                 console.log("删除：" + item);
-                this.$Modal.confirm({title: "删除作品",content: "是否确定删除？？？",
+                this.$Modal.confirm({title: "删除作品", content: "是否确定删除？？？",
                     onOk: () => {
                         this.$Message.success('成功删除');
                     }
                 })
             },
 
-            show: function () {
-                alert('你按了回车！');
-            },
-            show2: function () {
-                alert('你按了回车！');
-            },
-            show3: function () {
-                alert('你按了上键！');
-            },
-            show4: function () {
-                alert('你按了下键！');
-            },
-            show5: function () {
-                alert('你按了左键！');
-            },
-            show6: function () {
-                alert('你按了右键！');
-            },
-
-            showPreView(item_id){
-                console.log("预览：" + item_id);
+            showPreView(item){
                 this.modal_preView = true;
+                this.h5item =  item
             },
 
             ontest(){
-                this.$axios.get('/api/users/userauth').then((res) => {
-                    console.log(res)
-                })
+                console.log('asdfasdfsdf')
             },
 
             ontest1(){

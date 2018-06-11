@@ -52,6 +52,7 @@
     </div>
 </template>
 <script>
+    import crypto from '@/utils/crypto.js'
     export default {
         name: "login",
         props: [],
@@ -116,7 +117,7 @@
                         // TODO
                         let param = {
                             name: this.formValue.userName,
-                            password: this.formValue.password,
+                            password: crypto.getMd5(this.formValue.password),
                             email: this.formValue.email,
                             vercode: this.formValue.authCode
                         }

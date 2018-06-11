@@ -1,5 +1,5 @@
 <template>
-    <Modal  v-model="modal_preView" title="选择图片" :mask-closable="false" @on-visible-change="onVisibleChange" width="828"  :footerHide="true">
+    <Modal style="z-index: 9999" v-model="modal_preView" title="选择图片" :mask-closable="false" @on-visible-change="onVisibleChange" width="828"  :footerHide="true">
         <Row>
             <Col class="leftmenu" span="4">
                 <Menu style="width:auto" theme="light" :active-name="curMenu" @on-select="onMenuSelectEvent">
@@ -16,7 +16,6 @@
                         :on-success="handleSuccess"
                         :on-format-error="handleFormatError"
                         :on-exceeded-size="handleMaxSize"
-                        :before-upload="handleBeforeUpload"
                         multiple
                         :format="['jpg','jpeg','png']">
                     <Button style="position: absolute; bottom: 0" type="primary" @click="onBtnUpload" size="large" long>上传图片</Button>
@@ -55,7 +54,7 @@
         data(){
             return{
                 modal_preView: false,
-                baseHost: config.caryHost,
+                baseHost: config.caryHost + '/',
                 uploadUrl: config.caryHost + 'api/edit/files/upload/',
                 defaultList: [],
                 uploadList: [],

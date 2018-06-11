@@ -8,7 +8,7 @@
                     <iframe :src="qrcodeAdderss" width="100%" height="100%" frameborder="0"></iframe>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 3px;">
+            <div style="text-align: center; margin-top: 6px;">
                 <ButtonGroup shape="circle">
                     <Button ><Icon type="chevron-left"></Icon>上一页</Button>
                     <Button >下一页<Icon type="chevron-right"></Icon></Button>
@@ -19,11 +19,11 @@
             <div>
                 <h3>设置作品信息</h3>
                 <div>
-                    <Input style="margin-top: 6px" v-model="theme.title" placeholder="请输入标题..." ></Input>
+                    <Input style="margin-top: 6px" v-model="theme.title" :readonly="!getStatusEdit()" placeholder="请输入标题..." ></Input>
                 </div>
                 <br>
                 <div>
-                    <Input v-model="theme.description" type="textarea" :autosize="{ minRows: 3, maxRows: 4 }" placeholder="请输入简介..." ></Input>
+                    <Input v-model="theme.description" type="textarea"  :readonly="!getStatusEdit()" :autosize="{ minRows: 3, maxRows: 4 }" placeholder="请输入简介..." ></Input>
                 </div>
                 <br>
 
@@ -38,7 +38,7 @@
                             <div style="margin-top: 14px; ">
                                <div class="theme-bg">
                                    <img  v-if="theme.themebg" :src="baseHost + theme.themebg" width="134" height="134" alt="">
-                                   <div class="setting-change-bg">
+                                   <div v-if="getStatusEdit()" class="setting-change-bg">
                                        <Upload multiple
                                                :action="uploadUrl + userinfo._id"
                                                name="uploadFile"
@@ -64,13 +64,12 @@
                        </Row>
                     </div>
 
-                   <div style="text-align: center; margin-top: 16px">
-                       <Button type="primary" @click="onSave" >保存</Button>
-                       <Button type="primary" @click="onToEditor" >编辑</Button>
-                       <Button type="primary" @click="ontest" >发布</Button>
-                       <Button type="primary" @click="ontest" >保存</Button>
-                       <Button type="primary" @click="ontest" >编辑</Button>
-                       <helloword></helloword>
+                   <div style=" margin-top: 16px">
+                       <Button type="primary" v-if="$route.path === '/edit'" @click="onSave"                    >保存</Button>
+                       <Button type="primary" v-if="$route.path === '/usertheme'" @click="onToEditor"           >编辑</Button>
+                       <Button type="primary" v-if="getStatusEdit() && theme.status === 0" @click="onToBuild"   >发布</Button>
+                       <Button type="primary" v-if="getStatusEdit()" @click="onToDownload"                      >下载</Button>
+                       <Button type="primary" v-if="!getStatusEdit() || $route.path === '/usertheme'"  @click="onUseTemplate">使用模板</Button>
                    </div>
 
                 </div>
@@ -83,13 +82,10 @@
 <script>
     import qrcode from '@xkeshi/vue-qrcode';
     import * as config from '@/api/config'
-    import imgModal from '@/components/modals/ImgModals.vue'
-    import helloword from '@/components/HelloWorld.vue'
     export default {
         name: "preview-modal",
         components: {
             qrcode,
-            helloword,
         },
         props: {
             value: { type: Boolean, default: false },
@@ -100,7 +96,7 @@
                 }},
             title: { type: String, default: "title" },
             des: { type: String, default: 'descr', },
-            qurl: { type: String, default: 'http://h5.limesoftware.cn/pages/5abb31cf24d46f25373b28c7.html', }
+            qurl: { type: String, default: '', }
         },
         data(){
             return{
@@ -108,7 +104,7 @@
                 inputDes: this.des,
                 qrcodeAdderss: this.qurl,
                 modal_preView: this.preview,
-                baseHost: config.caryHost ,
+                baseHost: config.caryHost + '/',
                 uploadUrl: config.caryHost + 'api/edit/files/uploads?userid=',
                 isImgModal: false,
             }
@@ -121,7 +117,16 @@
         },
         computed:{
             userinfo(){
-                return this.$store.state.user.userinfo
+                let info = this.$store.state.user.userinfo
+                let ob = {}
+                if(info){
+                    ob = info
+                }else {
+                    ob = {
+                        _id: ''
+                    }
+                }
+                return ob
             },
 
             getThemebg(){
@@ -139,10 +144,23 @@
 
         },
         methods: {
+
+            //获取是否可以编辑
+            getStatusEdit(){
+                if(this.$route.path === '/edit' || this.$route.path === '/usertheme'){
+                    return true
+                }else {
+                    return false
+                }
+            },
+
             //弹出框更换状态
             onVisibleChange(visible){
                 if(!visible){
                     this.$emit('input', visible);
+                    this.qrcodeAdderss = ''
+                }else {
+                    this.qrcodeAdderss = this.baseHost + 'api/edit/preview/' + this.theme._id
                 }
             },
 
@@ -155,7 +173,6 @@
             //上传回调
             handleSuccess (res, file) {
                 this.theme.themebg = res.body[0].url
-                console.log(res.body[0].url);
             },
 
             handleFormatError (file) {
@@ -167,15 +184,60 @@
             },
 
             onSave(){
-                console.log(this.theme.themebg);
+                let pa = JSON.parse(JSON.stringify(this.theme))
+                this.$store.dispatch('saveTheme', pa).then(res => {
+                    // TODO 更新成功
+                    this.$Message.success('保存成功')
+                })
             },
 
             onToEditor(){
+                this.$store.dispatch('pageFindOne', this.theme._id).then(() => {
+                    this.$router.push({ path: '/edit', query: { itemId: this.theme._id }})
+                }).catch(err => {
+                    this.$Message.error('获取数据失败')
+                })
+            },
 
+            onToBuild(){
+                this.theme.status = 1
+                let pa = JSON.parse(JSON.stringify(this.theme))
+                this.$Spin.show();
+                this.$store.dispatch('saveTheme', pa).then(res => {
+                    // TODO 发布成功
+                    this.$Message.success('发布成功')
+                    this.$Spin.hide();
+                })
+            },
+
+            onToDownload(){
+                this.$Message.warning('正在努力开发')
+                window.location.href = this.baseHost + 'api/edit/thdownload/' + this.theme._id
+            },
+
+            onUseTemplate(){
+                if(this.userinfo._id){
+                    let useTheme = JSON.parse(JSON.stringify(this.theme))
+                    this.$store.commit('USE_CREATE_THEME', useTheme)
+                    this.$Spin.show();
+                    this.$store.dispatch('saveTheme', JSON.parse(JSON.stringify(this.$store.state.editor.editorTheme))).then((res) => {
+                        // todo 跳转到编辑页面
+                        this.$store.dispatch('pageFindOne', this.$store.state.editor.editorTheme._id).then(() => {
+                            this.$Spin.hide();
+                            this.$router.push({ path: '/edit', query: { itemId: this.$store.state.editor.editorTheme._id }})
+                        }).catch(err => {
+                            this.$Message.error('获取数据失败')
+                            this.$Spin.hide();
+                        })
+                    });
+                    this.$store.dispatch('useTheme', useTheme)
+                }else {
+                    this.$Message.warning('请先登录')
+                }
             },
 
             ontest(){
-                console.log(this.theme);
+                console.log(this.theme.path === '/edit');
             }
         }
     }
@@ -183,15 +245,15 @@
 
 <style scoped>
     .preview-plan {
-        width:360px;
-        padding: 8px;
+        width:348px;
+        padding: 2px;
         border: 1px solid #dddee1;
         border-radius: 4px
     }
     .preview-iframe {
-        width:340px;
-        height: 530px;
-        background: #7f7f7f
+        width: 342px;
+        height: 582px;
+        background: #fff
     }
 
     .setting-change-bg {

@@ -15,7 +15,7 @@
                             <Icon type="ios-navigate"></Icon>
                             首页
                         </MenuItem>
-                        <MenuItem name="/edit">
+                        <MenuItem name="/tmpelate">
                             <Icon type="ios-keypad"></Icon>
                             推荐模板
                         </MenuItem>

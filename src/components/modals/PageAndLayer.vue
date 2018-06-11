@@ -22,7 +22,7 @@
                         <h2>{{ index + 1}}</h2>
                         <div v-bind:class="{'page-activ': page === curPage }" style="padding-top: 8px;padding-bottom: 8px">
                             <div class="listpage">
-                                {{ page.name }}
+                                <PerviewPage style="transform-origin: left top; transform: scale(0.3947)" :elems.sync="page.elements"></PerviewPage>
                             </div>
                             <div v-show="page === curPage" class="listpage-control">
                                 <Button style="padding: 0;" @click="onPageCopy(page)" type="text" title="复制一页">
@@ -63,8 +63,12 @@
 </template>
 
 <script>
+    import PerviewPage from '@/components/modals/PreviewPage'
     export default {
         name: "page-and-layer",
+        components: {
+            PerviewPage
+        },
         props: [],
         data(){
             return {
@@ -175,8 +179,9 @@
     }
 
     .listpage{
+        position: relative;
         width: 150px;
-        height: 240px;
+        height: 230px;
         margin: 0 auto;
         background-color: #f2f5f6;
     }

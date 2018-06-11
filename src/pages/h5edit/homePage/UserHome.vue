@@ -9,7 +9,7 @@
                     <ul class="theme-list">
                         <Card  class="theme-item">
                             <div style="height: 100%; position: relative;">
-                                <div class="c-create-add" @click="onCreateTheme">
+                                <div class="c-create-add" @click="modal_create = true">
                                     <Icon size="130" type="plus-round"></Icon>
                                     <h2>创建作品</h2>
                                 </div>
@@ -28,12 +28,17 @@
                                                 <i style="cursor: pointer;" @click="deleteTheme(item)"><Icon size="22" type="trash-a"></Icon></i>
                                             </Tooltip>
                                         </div>
-                                        <Button class="preview" size="large" @click="showPreView(item.userId)" icon="play">预览</Button>
+                                        <Button class="preview" size="large" @click="showPreView(item)" icon="play">预览</Button>
                                     </div>
                                 </div>
                                 <div class="footer">
+                                    <!--<div class="title">{{ item.title }}</div>-->
                                     <div class="title">{{ item.title }}</div>
-                                    <div class="content">{{ item.description }}</div>
+                                    <div style="height: 32px;">
+                                        <span v-if="item.status === 1" style="padding: 2px; background-color: #5cadff; color: #fff">发布</span>
+                                        <span v-if="item.status === 0" style="padding: 2px; background-color: #80848f; color: #fff">未发布</span>
+                                    </div>
+                                    <div class="content">{{item.use_count}} 次制作</div>
                                 </div>
                             </Card>
                         </template>
@@ -50,12 +55,12 @@
                 <Button :disabled="!inputTile" @click="onModalOk" type="primary" style="float: right;">确定</Button>
             </div>
         </Modal>
-        <perview v-model="modal_preView"></perview>
+        <perview v-model="modal_preView" :theme="h5item"></perview>
     </div>
 </template>
 
 <script>
-    import Perview from '@/components/modals/previewModal'
+    import Perview from '@/components/modals/PreviewSetModal'
     import Qrcode from '@xkeshi/vue-qrcode'
     import * as types from '@/store/mutation-types'
     import * as config from '@/api/config'
@@ -73,12 +78,21 @@
                 qrcodeAdderss: 'http://xxxxxxxxxxxxxxx',
                 modal_create: false,
                 modal_preView: false,
-                baseHost: config.caryHost
+                h5item: {
+                    title: 'title',
+                    description: 'des'
+                },
+                baseHost:   config.caryHost + '/'
             };
         },
         computed: {
             themelist(){
-                return this.$store.state.editor.themeList
+                let thlist = this.$store.state.editor.themeList
+                let arr = []
+                thlist.map((item) => {
+                    arr.unshift(item)
+                })
+                return arr
             }
         },
         mounted(){
@@ -86,11 +100,13 @@
         },
         methods: {
             toEditor(item){
-                console.log("编辑：" + item);
-                this.$router.push({ path: '/edit', query: { itemId: item._id }})
+                this.$store.dispatch('pageFindOne', item._id).then(() => {
+                    this.$router.push({ path: '/edit', query: { itemId: item._id }})
+                }).catch(err => {
+                    this.$Message.error('获取数据失败')
+                })
             },
             deleteTheme(item){
-                console.log("删除：" + item);
                 this.$Modal.confirm({title: "删除作品",content: "是否确定删除？？？",
                     onOk: () => {
                         this.$store.dispatch('userDeleteTheme', item).then(() => {
@@ -99,13 +115,12 @@
                     }
                 })
             },
-            showPreView(item_id){
-                console.log("预览：" + item_id);
+
+            showPreView(item){
                 this.modal_preView = true;
+                this.h5item = item
             },
-            onCreateTheme(){
-                this.modal_create = true;
-            },
+
             //创建新的作品
             onModalOk(){
                 this.modal_create = false;
@@ -114,7 +129,11 @@
                 //todo 访问网络保存当创建的页面
                 this.$store.dispatch('saveTheme', JSON.parse(JSON.stringify(this.$store.state.editor.editorTheme))).then((res) => {
                     // todo 跳转到编辑页面
-                    this.$router.push({ path: '/edit', query: { itemId: this.$store.state.editor.editorTheme._id }})
+                    this.$store.dispatch('pageFindOne', this.$store.state.editor.editorTheme._id).then(() => {
+                        this.$router.push({ path: '/edit', query: { itemId: this.$store.state.editor.editorTheme._id }})
+                    }).catch(err => {
+                        this.$Message.error('获取数据失败')
+                    })
                 });
                 //清空 创建也没的数据
                 this.inputDes = "";

@@ -20,6 +20,11 @@ var themeSchema = mongoose.Schema({
         default: 'h5',
     },
 
+    use_count: {
+        type: Number,
+        default: 0
+    },
+
     status: {
         type: Number,
         default: 0,

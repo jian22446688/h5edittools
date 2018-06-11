@@ -9,7 +9,7 @@ require('iview/dist/styles/iview.css');
 // import 'iview/dist/styles/iview.css'
 require('./api/mock/index');
 import store from './store'
-
+import 'animate.css'
 import contentmenu from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
 axios.defaults.withCredentials = true
